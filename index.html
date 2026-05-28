@@ -406,6 +406,7 @@ void main() {
           path: "assets/shutdown-sequence",
           mode: "once",
           fadeBackground: true,
+          fadeStart: 0.72,
         },
       ];
       let currentStateIndex = 0;
@@ -472,7 +473,9 @@ void main() {
               : Math.floor(elapsed / frameDuration) % state.frameCount;
 
           if (state.fadeBackground) {
-            setAuroraOpacity(1 - progress);
+            const fadeStart = state.fadeStart ?? 0;
+            const fadeProgress = Math.max(0, Math.min(1, (progress - fadeStart) / (1 - fadeStart)));
+            setAuroraOpacity(1 - fadeProgress);
           }
 
           drawLogoFrame(frame);
