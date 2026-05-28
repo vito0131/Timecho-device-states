@@ -387,6 +387,7 @@ void main() {
 
       const logoCanvas = document.getElementById("logo-sequence");
       const logoCtx = logoCanvas.getContext("2d");
+      const auroraLayer = document.querySelector(".aurora-layer");
       const states = [
         {
           id: "boot",
@@ -394,12 +395,24 @@ void main() {
           frameCount: 118,
           fps: 18,
           path: "assets/logo-sequence",
+          mode: "loop",
+          fadeBackground: false,
+        },
+        {
+          id: "shutdown",
+          label: "关机",
+          frameCount: 159,
+          fps: 18,
+          path: "assets/shutdown-sequence",
+          mode: "once",
+          fadeBackground: true,
         },
       ];
       let currentStateIndex = 0;
       let currentFrames = [];
       let logoAnimationToken = 0;
       const stateLabel = document.getElementById("state-label");
+      const frameCache = new Map();
 
       function loadFrames(state) {
         return Array.from({ length: state.frameCount }, (_, index) => {
@@ -425,13 +438,15 @@ void main() {
         );
       }
 
-      const logoFrames = Array.from({ length: states[0].frameCount }, (_, index) => {
-        const img = new Image();
-        img.decoding = "async";
-        img.src = `${states[0].path}/frame_${String(index + 1).padStart(4, "0")}.png`;
-        return img;
-      });
-      currentFrames = logoFrames;
+      function getFrames(state) {
+        if (!frameCache.has(state.id)) {
+          frameCache.set(state.id, loadFrames(state));
+        }
+        return frameCache.get(state.id);
+      }
+
+      const bootFrames = getFrames(states[0]);
+      currentFrames = bootFrames;
 
       function drawLogoFrame(index) {
         const img = currentFrames[index];
@@ -440,12 +455,34 @@ void main() {
         logoCtx.drawImage(img, 0, 0, logoCanvas.width, logoCanvas.height);
       }
 
+      function setAuroraOpacity(value) {
+        auroraLayer.style.opacity = String(Math.max(0, Math.min(1, value)));
+      }
+
       function playLogoSequence(startTime, state, token) {
         const step = (now) => {
           if (token !== logoAnimationToken) return;
           const elapsed = now - startTime;
-          const frame = Math.floor(elapsed / (1000 / state.fps)) % state.frameCount;
+          const frameDuration = 1000 / state.fps;
+          const duration = frameDuration * state.frameCount;
+          const progress = Math.min(1, elapsed / duration);
+          const frame =
+            state.mode === "once"
+              ? Math.min(state.frameCount - 1, Math.floor(elapsed / frameDuration))
+              : Math.floor(elapsed / frameDuration) % state.frameCount;
+
+          if (state.fadeBackground) {
+            setAuroraOpacity(1 - progress);
+          }
+
           drawLogoFrame(frame);
+
+          if (state.mode === "once" && progress >= 1) {
+            logoCtx.clearRect(0, 0, logoCanvas.width, logoCanvas.height);
+            if (state.fadeBackground) setAuroraOpacity(0);
+            return;
+          }
+
           requestAnimationFrame(step);
         };
         requestAnimationFrame(step);
@@ -455,10 +492,12 @@ void main() {
         currentStateIndex = (nextIndex + states.length) % states.length;
         const state = states[currentStateIndex];
         stateLabel.textContent = state.label;
-        const frames = currentStateIndex === 0 ? logoFrames : loadFrames(state);
+        setAuroraOpacity(1);
+        const frames = getFrames(state);
         currentFrames = frames;
         logoAnimationToken += 1;
         const token = logoAnimationToken;
+        logoCtx.clearRect(0, 0, logoCanvas.width, logoCanvas.height);
         drawLogoFrame(0);
         waitForFrames(frames)
           .then(() => {
@@ -466,6 +505,9 @@ void main() {
             drawLogoFrame(0);
             if (!window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
               playLogoSequence(performance.now(), state, token);
+            } else if (state.mode === "once" && state.fadeBackground) {
+              logoCtx.clearRect(0, 0, logoCanvas.width, logoCanvas.height);
+              setAuroraOpacity(0);
             }
           })
           .catch(() => {
@@ -475,9 +517,9 @@ void main() {
 
       document.getElementById("prev-state").addEventListener("click", () => setState(currentStateIndex - 1));
       document.getElementById("next-state").addEventListener("click", () => setState(currentStateIndex + 1));
-      logoFrames[0].addEventListener("load", () => drawLogoFrame(0), { once: true });
+      bootFrames[0].addEventListener("load", () => drawLogoFrame(0), { once: true });
 
-      waitForFrames(logoFrames)
+      waitForFrames(bootFrames)
         .then(() => {
           logoAnimationToken += 1;
           drawLogoFrame(0);
