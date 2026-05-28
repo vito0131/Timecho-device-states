@@ -78,6 +78,48 @@
         display: none;
       }
 
+      .state-switcher {
+        position: fixed;
+        top: 14px;
+        left: 14px;
+        z-index: 20;
+        display: flex;
+        align-items: center;
+        gap: 6px;
+        padding: 5px;
+        border: 1px solid rgba(255, 255, 255, 0.14);
+        border-radius: 999px;
+        background: rgba(0, 0, 0, 0.22);
+        color: rgba(255, 255, 255, 0.86);
+        font: 12px/1 system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+        backdrop-filter: blur(10px);
+        -webkit-backdrop-filter: blur(10px);
+        user-select: none;
+      }
+
+      .state-button {
+        width: 22px;
+        height: 22px;
+        display: grid;
+        place-items: center;
+        border: 0;
+        border-radius: 50%;
+        background: rgba(255, 255, 255, 0.1);
+        color: rgba(255, 255, 255, 0.9);
+        cursor: pointer;
+        font: inherit;
+      }
+
+      .state-button:hover {
+        background: rgba(255, 255, 255, 0.18);
+      }
+
+      .state-label {
+        min-width: 34px;
+        text-align: center;
+        letter-spacing: 0;
+      }
+
       @media (max-width: 520px) {
         .splash-logo-wrap {
           width: min(84vw, 55vh);
@@ -89,6 +131,12 @@
     <main class="stage" aria-label="Fluid glow splash animation">
       <div class="aurora-layer">
         <canvas id="aurora"></canvas>
+      </div>
+
+      <div class="state-switcher" aria-label="State switcher">
+        <button class="state-button" id="prev-state" type="button" aria-label="Previous state">‹</button>
+        <span class="state-label" id="state-label">开机</span>
+        <button class="state-button" id="next-state" type="button" aria-label="Next state">›</button>
       </div>
 
       <div class="logo-layer">
@@ -339,50 +387,102 @@ void main() {
 
       const logoCanvas = document.getElementById("logo-sequence");
       const logoCtx = logoCanvas.getContext("2d");
-      const logoFrameCount = 118;
-      const logoFps = 18;
-      const logoFrames = Array.from({ length: logoFrameCount }, (_, index) => {
+      const states = [
+        {
+          id: "boot",
+          label: "开机",
+          frameCount: 118,
+          fps: 18,
+          path: "assets/logo-sequence",
+        },
+      ];
+      let currentStateIndex = 0;
+      let currentFrames = [];
+      let logoAnimationToken = 0;
+      const stateLabel = document.getElementById("state-label");
+
+      function loadFrames(state) {
+        return Array.from({ length: state.frameCount }, (_, index) => {
+          const img = new Image();
+          img.decoding = "async";
+          img.src = `${state.path}/frame_${String(index + 1).padStart(4, "0")}.png`;
+          return img;
+        });
+      }
+
+      function waitForFrames(frames) {
+        return Promise.all(
+          frames.map(
+            (img) =>
+              new Promise((resolve, reject) => {
+                if (img.complete && img.naturalWidth) resolve();
+                else {
+                  img.addEventListener("load", resolve, { once: true });
+                  img.addEventListener("error", reject, { once: true });
+                }
+              })
+          )
+        );
+      }
+
+      const logoFrames = Array.from({ length: states[0].frameCount }, (_, index) => {
         const img = new Image();
         img.decoding = "async";
-        img.src = `assets/logo-sequence/frame_${String(index + 1).padStart(4, "0")}.png`;
+        img.src = `${states[0].path}/frame_${String(index + 1).padStart(4, "0")}.png`;
         return img;
       });
+      currentFrames = logoFrames;
 
       function drawLogoFrame(index) {
-        const img = logoFrames[index];
+        const img = currentFrames[index];
         if (!img || !img.complete || !img.naturalWidth) return;
         logoCtx.clearRect(0, 0, logoCanvas.width, logoCanvas.height);
         logoCtx.drawImage(img, 0, 0, logoCanvas.width, logoCanvas.height);
       }
 
-      function playLogoSequence(startTime) {
+      function playLogoSequence(startTime, state, token) {
         const step = (now) => {
+          if (token !== logoAnimationToken) return;
           const elapsed = now - startTime;
-          const frame = Math.floor(elapsed / (1000 / logoFps)) % logoFrameCount;
+          const frame = Math.floor(elapsed / (1000 / state.fps)) % state.frameCount;
           drawLogoFrame(frame);
           requestAnimationFrame(step);
         };
         requestAnimationFrame(step);
       }
 
+      function setState(nextIndex) {
+        currentStateIndex = (nextIndex + states.length) % states.length;
+        const state = states[currentStateIndex];
+        stateLabel.textContent = state.label;
+        const frames = currentStateIndex === 0 ? logoFrames : loadFrames(state);
+        currentFrames = frames;
+        logoAnimationToken += 1;
+        const token = logoAnimationToken;
+        drawLogoFrame(0);
+        waitForFrames(frames)
+          .then(() => {
+            if (token !== logoAnimationToken) return;
+            drawLogoFrame(0);
+            if (!window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
+              playLogoSequence(performance.now(), state, token);
+            }
+          })
+          .catch(() => {
+            document.querySelector(".splash-logo-wrap").classList.remove("has-sequence");
+          });
+      }
+
+      document.getElementById("prev-state").addEventListener("click", () => setState(currentStateIndex - 1));
+      document.getElementById("next-state").addEventListener("click", () => setState(currentStateIndex + 1));
       logoFrames[0].addEventListener("load", () => drawLogoFrame(0), { once: true });
 
-      Promise.all(
-        logoFrames.map(
-          (img) =>
-            new Promise((resolve, reject) => {
-              if (img.complete && img.naturalWidth) resolve();
-              else {
-                img.addEventListener("load", resolve, { once: true });
-                img.addEventListener("error", reject, { once: true });
-              }
-            })
-        )
-      )
+      waitForFrames(logoFrames)
         .then(() => {
+          logoAnimationToken += 1;
           drawLogoFrame(0);
           if (!window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
-            playLogoSequence(performance.now());
+            playLogoSequence(performance.now(), states[0], logoAnimationToken);
           }
         })
         .catch(() => {
