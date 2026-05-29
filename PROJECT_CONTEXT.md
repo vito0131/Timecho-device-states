@@ -82,6 +82,7 @@ assets/
   - State id: `standby-card-placement`
   - Uses the shared global aurora background, top-right Wi-Fi icon, centered split content, and instruction text
   - Center content is separated into `standby-timecho.png` and `standby-card.png` so the card can animate independently
+  - Card animation fades in, drops `15px` into the slot, holds, fades out in place, then loops
   - Main copy: `请将卡片放入示意处`
   - Developer naming details live in `DESIGN_HANDOFF.md`
 - Read card failure state:
@@ -95,47 +96,47 @@ assets/
   - Figma node: `412:622`
   - State id: `nfc-web-loading`
   - Uses the shared global aurora background and top-right Wi-Fi icon
-  - Center content is CSS-rendered so the spinner and breathing circles can animate independently
+  - Center content is CSS-rendered so the spinner can animate independently
   - Loading spinner rotates continuously
-  - `circle1` and `circle2` are staggered expanding ripples that move at a consistent rate, pass through the circle1 size, then grow to the outer circle size and fade out
+  - `circle1` and `circle2` are shown as static rings with circle2 at 5% opacity, circle1 at 10% opacity, and ripple animation disabled across all loading/Wi-Fi states
   - Main copy: `网页加载中`
 - Wi-Fi disconnected state:
   - Figma node: `412:637`
   - State id: `nfc-wifi-disconnected`
   - Uses the shared global aurora background and a failed Wi-Fi icon in the top-right status position
-  - Reuses the NFC ripple animation timing for `circle1` and `circle2`
-  - Ripple color follows Figma: `#FFE60A`
+  - `circle1` and `circle2` are shown as static rings with circle2 at 5% opacity, circle1 at 10% opacity, and ripple animation disabled
+  - Failure color follows Figma: `#FFE60A`
   - Center symbol uses `assets/ui-icons/wifi-failed.svg` with a yellow glow
   - Main copy: `Wi-Fi未连接`
 - Wi-Fi connecting state:
   - Figma node: `412:681`
   - State id: `nfc-wifi-connecting`
   - Uses the shared global aurora background and a failed/connecting Wi-Fi icon in the top-right status position
-  - Reuses the NFC ripple animation timing for `circle1` and `circle2`
-  - Ripple color follows Figma: `#FFE60A`
+  - `circle1` and `circle2` are shown as static rings with circle2 at 5% opacity, circle1 at 10% opacity, and ripple animation disabled
+  - Failure color follows Figma: `#FFE60A`
   - Center Wi-Fi symbol is split into three local SVG tiers:
     `wifi-connecting-tier-1.svg`, `wifi-connecting-tier-2.svg`, and `wifi-connecting-tier-3.svg`
-  - First tier stays at 100% opacity; second and third tiers loop from 45% to 100% opacity in sequence
+  - First, second, and third tiers loop from 45% to 100% opacity in sequence
   - Main copy: `Wi-Fi连接中...`
 - Wi-Fi connected state:
   - Figma node: `412:702`
   - State id: `nfc-wifi-connected`
   - Uses the shared global aurora background and normal top-right Wi-Fi icon
-  - Reuses the NFC ripple animation timing for `circle1` and `circle2`
-  - Ripple color follows Figma: `#27FF0A`
+  - `circle1` and `circle2` are shown as static rings with circle2 at 5% opacity, circle1 at 10% opacity, and ripple animation disabled
+  - Success color follows Figma: `#27FF0A`
   - Center symbol uses `assets/ui-icons/wifi-success.svg`
   - Main copy: `Wi-Fi连接成功`
 - Wi-Fi connection failed state:
   - State id: `nfc-wifi-connection-failed`
-  - Uses the same style, motion, top-right failed Wi-Fi icon, and yellow ripple treatment as the Wi-Fi disconnected state
-  - Ripple color follows Figma Wi-Fi failure style: `#FFE60A`
+  - Uses the same style, top-right failed Wi-Fi icon, and center failed icon treatment as the Wi-Fi disconnected state
+  - Failure color follows Figma Wi-Fi failure style: `#FFE60A`
   - Center symbol uses `assets/ui-icons/wifi-failed.svg` with a yellow glow
   - Main copy: `Wi-Fi连接失败`
 - NFC web loading failure state:
   - Figma node: `412:722`
   - State id: `nfc-web-loading-failed`
   - Uses the shared global aurora background and top-right Wi-Fi icon
-  - Reuses the NFC loading ripple animation, with red UI colors from Figma
+  - `circle1` and `circle2` are shown as static rings with circle2 at 5% opacity, circle1 at 10% opacity, and ripple animation disabled
   - Center symbol is a CSS-rendered red failure icon
   - Main copy: `网页加载失败`
 

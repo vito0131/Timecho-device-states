@@ -22,6 +22,14 @@ Node: 412:53
 | `text` | `standbyCardInstructionContainer` | text wrapper in `.standby-card-content` | Instruction block |
 | `请将卡片放入示意处` | `standbyCardInstruction` | `.standby-card-instruction` | User-facing copy |
 
+### Motion
+
+```text
+standbyPlacementCard: 2.1s ease-in-out loop
+standbyPlacementCardDrop: 15px via --standby-card-drop
+sequence: transparent -> fade to 100% opacity -> drop into slot -> short hold -> quick fade out in the inserted position -> repeat
+```
+
 ### Background Rule
 
 The aurora glow is a global scene layer shared by every device state. New states should replace only the center content/status content unless a state explicitly needs a terminal effect, such as shutdown fading to black at the end.
@@ -146,8 +154,8 @@ Node: 412:622
 | `放入NFC卡片-网页加载中` | `nfcWebLoadingState` | `#nfc-loading-state` | Full NFC web loading state layer |
 | `icon/wifi` | `wifiStatusIcon` | `assets/ui-icons/wifi-status.svg`, `.wifi-status-icon` | Shared top-right Wi-Fi icon |
 | `content` | `nfcWebLoadingContent` | `.nfc-loading-content` | Center content group |
-| `circle1` | `nfcLoadingPrimaryRipple` | `.nfc-loading-circle.ripple-primary` | First expanding ripple |
-| `circle2` | `nfcLoadingSecondaryRipple` | `.nfc-loading-circle.ripple-secondary` | Second expanding ripple, offset after the first |
+| `circle1` | `nfcLoadingPrimaryRipple` | `.nfc-loading-circle.ripple-primary` | Static outer ring, 5% opacity; ripple animation disabled |
+| `circle2` | `nfcLoadingSecondaryRipple` | `.nfc-loading-circle.ripple-secondary` | Static inner ring, 10% opacity; ripple animation disabled |
 | `loading` | `nfcLoadingSpinner` | `.nfc-loading-spinner` | CSS spinner, rotates continuously |
 | `网页加载中` | `nfcWebLoadingCopy` | `.nfc-loading-copy` | User-facing copy |
 
@@ -167,8 +175,8 @@ nfc.webLoading.copy
 
 ```text
 nfcLoadingSpinner: 1.1s linear infinite rotation
-nfcLoadingPrimaryRipple: 1.55s linear expanding circle, passes through the circle1 size and keeps fading until the outer circle size
-nfcLoadingSecondaryRipple: 1.55s expanding circle, starts 0.58s after primary ripple
+nfcLoadingPrimaryRipple: static outer ring, 5% opacity, no animation
+nfcLoadingSecondaryRipple: static inner ring, 10% opacity, no animation
 ```
 
 ### Layout Reference
@@ -208,11 +216,11 @@ Node: 412:681
 | `配网-配网进行中` | `nfcWifiConnectingState` | `#nfc-wifi-connecting-state` | Full Wi-Fi connecting state layer |
 | `icon/wifi failed` | `wifiFailedStatusIcon` | `assets/ui-icons/wifi-failed.svg`, `.wifi-status-icon` | Top-right failed/connecting Wi-Fi icon |
 | `content` | `nfcWifiConnectingContent` | `.nfc-wifi-connecting-content` | Center content group |
-| `Wi-Fi connecting` | `nfcWifiConnectingIndicator` | `.nfc-wifi-connecting-indicator` | Reuses shared NFC ripple markup and animation |
-| `circle2` | `nfcWifiConnectingPrimaryRipple` | `.nfc-loading-circle.ripple-primary` | First yellow expanding ripple |
-| `circle1` | `nfcWifiConnectingSecondaryRipple` | `.nfc-loading-circle.ripple-secondary` | Second yellow expanding ripple, offset after the first |
-| `第一格` | `nfcWifiConnectingTier1` | `assets/ui-icons/wifi-connecting-tier-1.svg`, `.nfc-wifi-connecting-tier-1` | Always 100% opacity |
-| `第二格` | `nfcWifiConnectingTier2` | `assets/ui-icons/wifi-connecting-tier-2.svg`, `.nfc-wifi-connecting-tier-2` | Loops from 45% to 100% opacity |
+| `Wi-Fi connecting` | `nfcWifiConnectingIndicator` | `.nfc-wifi-connecting-indicator` | Shared indicator wrapper; ripple circles are static |
+| `circle2` | `nfcWifiConnectingPrimaryRipple` | `.nfc-loading-circle.ripple-primary` | Static outer ring, 5% opacity; ripple animation disabled |
+| `circle1` | `nfcWifiConnectingSecondaryRipple` | `.nfc-loading-circle.ripple-secondary` | Static inner ring, 10% opacity; ripple animation disabled |
+| `第一格` | `nfcWifiConnectingTier1` | `assets/ui-icons/wifi-connecting-tier-1.svg`, `.nfc-wifi-connecting-tier-1` | Loops from 45% to 100% opacity first |
+| `第二格` | `nfcWifiConnectingTier2` | `assets/ui-icons/wifi-connecting-tier-2.svg`, `.nfc-wifi-connecting-tier-2` | Loops from 45% to 100% opacity after tier 1 |
 | `第三格` | `nfcWifiConnectingTier3` | `assets/ui-icons/wifi-connecting-tier-3.svg`, `.nfc-wifi-connecting-tier-3` | Loops from 45% to 100% opacity after tier 2 |
 | `Wi-Fi连接中…` | `nfcWifiConnectingCopy` | `.nfc-loading-copy` | User-facing copy |
 
@@ -231,10 +239,10 @@ nfc.wifiConnecting.copy
 ### Motion
 
 ```text
-nfcWifiConnectingPrimaryRipple: 1.55s linear expanding circle, same timing as NFC web loading
-nfcWifiConnectingSecondaryRipple: 1.55s expanding circle, starts 0.58s after primary ripple
-nfcWifiConnectingTier1: fixed 100% opacity
-nfcWifiConnectingTier2: 0.72s ease-in-out opacity loop, 45% -> 100% -> 45%
+nfcWifiConnectingPrimaryRipple: static outer ring, 5% opacity, no animation
+nfcWifiConnectingSecondaryRipple: static inner ring, 10% opacity, no animation
+nfcWifiConnectingTier1: 0.72s ease-in-out opacity loop, 45% -> 100% -> 45%
+nfcWifiConnectingTier2: 0.72s ease-in-out opacity loop after tier 1, 45% -> 100% -> 45%
 nfcWifiConnectingTier3: 0.72s ease-in-out opacity loop after tier 2, 45% -> 100% -> 45%
 ```
 
@@ -282,9 +290,9 @@ Node: 412:702
 | `配网-配网成功` | `nfcWifiConnectedState` | `#nfc-wifi-connected-state` | Full Wi-Fi connected state layer |
 | `icon/wifi` | `wifiStatusIcon` | `assets/ui-icons/wifi-status.svg`, `.wifi-status-icon` | Top-right connected Wi-Fi icon |
 | `content` | `nfcWifiConnectedContent` | `.nfc-wifi-connected-content` | Center content group |
-| `success` | `nfcWifiConnectedIndicator` | `.nfc-wifi-connected-indicator` | Reuses shared NFC ripple markup and animation |
-| `circle2` | `nfcWifiConnectedPrimaryRipple` | `.nfc-loading-circle.ripple-primary` | First green expanding ripple |
-| `circle1` | `nfcWifiConnectedSecondaryRipple` | `.nfc-loading-circle.ripple-secondary` | Second green expanding ripple, offset after the first |
+| `success` | `nfcWifiConnectedIndicator` | `.nfc-wifi-connected-indicator` | Shared indicator wrapper; ripple circles are static |
+| `circle2` | `nfcWifiConnectedPrimaryRipple` | `.nfc-loading-circle.ripple-primary` | Static outer ring, 5% opacity; ripple animation disabled |
+| `circle1` | `nfcWifiConnectedSecondaryRipple` | `.nfc-loading-circle.ripple-secondary` | Static inner ring, 10% opacity; ripple animation disabled |
 | `success_2` | `nfcWifiConnectedSymbol` | `assets/ui-icons/wifi-success.svg`, `.nfc-wifi-connected-symbol` | Center success icon |
 | `Wi-Fi连接成功` | `nfcWifiConnectedCopy` | `.nfc-loading-copy` | User-facing copy |
 
@@ -303,8 +311,8 @@ nfc.wifiConnected.copy
 ### Motion
 
 ```text
-nfcWifiConnectedPrimaryRipple: 1.55s linear expanding circle, same timing as NFC web loading
-nfcWifiConnectedSecondaryRipple: 1.55s expanding circle, starts 0.58s after primary ripple
+nfcWifiConnectedPrimaryRipple: static outer ring, 5% opacity, no animation
+nfcWifiConnectedSecondaryRipple: static inner ring, 10% opacity, no animation
 ```
 
 ### Color Reference
@@ -351,9 +359,9 @@ Node: 412:637
 | `放入NFC卡片- Wi-Fi未连接-静` | `nfcWifiDisconnectedState` | `#nfc-wifi-disconnected-state` | Full Wi-Fi disconnected state layer |
 | `icon/wifi failed` | `wifiFailedStatusIcon` | `assets/ui-icons/wifi-failed.svg`, `.wifi-status-icon` | Top-right failed Wi-Fi icon |
 | `content` | `nfcWifiDisconnectedContent` | `.nfc-wifi-disconnected-content` | Center content group |
-| `not connect` | `nfcWifiDisconnectedIndicator` | `.nfc-wifi-disconnected-indicator` | Reuses shared NFC ripple markup and animation |
-| `circle1` | `nfcWifiDisconnectedPrimaryRipple` | `.nfc-loading-circle.ripple-primary` | First yellow expanding ripple |
-| `circle1_2` | `nfcWifiDisconnectedSecondaryRipple` | `.nfc-loading-circle.ripple-secondary` | Second yellow expanding ripple, offset after the first |
+| `not connect` | `nfcWifiDisconnectedIndicator` | `.nfc-wifi-disconnected-indicator` | Shared indicator wrapper; ripple circles are static |
+| `circle1` | `nfcWifiDisconnectedPrimaryRipple` | `.nfc-loading-circle.ripple-primary` | Static outer ring, 5% opacity; ripple animation disabled |
+| `circle1_2` | `nfcWifiDisconnectedSecondaryRipple` | `.nfc-loading-circle.ripple-secondary` | Static inner ring, 10% opacity; ripple animation disabled |
 | `wifi not connected` | `nfcWifiDisconnectedSymbol` | `.nfc-wifi-disconnected-symbol` | Center failed Wi-Fi icon with yellow glow |
 | `Wi-Fi未连接` | `nfcWifiDisconnectedCopy` | `.nfc-loading-copy` | User-facing copy |
 
@@ -372,8 +380,8 @@ nfc.wifiDisconnected.copy
 ### Motion
 
 ```text
-nfcWifiDisconnectedPrimaryRipple: 1.55s linear expanding circle, same timing as NFC web loading
-nfcWifiDisconnectedSecondaryRipple: 1.55s expanding circle, starts 0.58s after primary ripple
+nfcWifiDisconnectedPrimaryRipple: static outer ring, 5% opacity, no animation
+nfcWifiDisconnectedSecondaryRipple: static inner ring, 10% opacity, no animation
 ```
 
 ### Color Reference
@@ -413,9 +421,9 @@ This state intentionally mirrors the Wi-Fi disconnected visual treatment and mot
 | `Wi-Fi连接失败` | `nfcWifiConnectionFailedState` | `#nfc-wifi-connection-failed-state` | Full Wi-Fi connection failure state layer |
 | `icon/wifi failed` | `wifiFailedStatusIcon` | `assets/ui-icons/wifi-failed.svg`, `.wifi-status-icon` | Top-right failed Wi-Fi icon |
 | `content` | `nfcWifiConnectionFailedContent` | `.nfc-wifi-connection-failed-content` | Center content group |
-| `not connect` | `nfcWifiConnectionFailedIndicator` | `.nfc-wifi-connection-failed-indicator` | Reuses shared NFC ripple markup and animation |
-| `circle1` | `nfcWifiConnectionFailedPrimaryRipple` | `.nfc-loading-circle.ripple-primary` | First yellow expanding ripple |
-| `circle1_2` | `nfcWifiConnectionFailedSecondaryRipple` | `.nfc-loading-circle.ripple-secondary` | Second yellow expanding ripple, offset after the first |
+| `not connect` | `nfcWifiConnectionFailedIndicator` | `.nfc-wifi-connection-failed-indicator` | Shared indicator wrapper; ripple circles are static |
+| `circle1` | `nfcWifiConnectionFailedPrimaryRipple` | `.nfc-loading-circle.ripple-primary` | Static outer ring, 5% opacity; ripple animation disabled |
+| `circle1_2` | `nfcWifiConnectionFailedSecondaryRipple` | `.nfc-loading-circle.ripple-secondary` | Static inner ring, 10% opacity; ripple animation disabled |
 | `wifi not connected` | `nfcWifiConnectionFailedSymbol` | `assets/ui-icons/wifi-failed.svg`, `.nfc-wifi-connection-failed-symbol` | Center failed Wi-Fi icon with yellow glow |
 | `Wi-Fi连接失败` | `nfcWifiConnectionFailedCopy` | `.nfc-loading-copy` | User-facing copy |
 
@@ -434,8 +442,8 @@ nfc.wifiConnectionFailed.copy
 ### Motion
 
 ```text
-nfcWifiConnectionFailedPrimaryRipple: 1.55s linear expanding circle, same timing as NFC web loading and Wi-Fi disconnected
-nfcWifiConnectionFailedSecondaryRipple: 1.55s expanding circle, starts 0.58s after primary ripple
+nfcWifiConnectionFailedPrimaryRipple: static outer ring, 5% opacity, no animation
+nfcWifiConnectionFailedSecondaryRipple: static inner ring, 10% opacity, no animation
 ```
 
 ### Color Reference
@@ -475,8 +483,8 @@ Node: 412:722
 | `放入NFC卡片-网页加载失败` | `nfcWebLoadingFailedState` | `#nfc-loading-failed-state` | Full NFC web loading failed state layer |
 | `icon/wifi` | `wifiStatusIcon` | `assets/ui-icons/wifi-status.svg`, `.wifi-status-icon` | Shared top-right Wi-Fi icon |
 | `content` | `nfcWebLoadingFailedContent` | `.nfc-loading-failed-content` | Center content group |
-| `circle1` | `nfcLoadingFailedPrimaryRipple` | `.nfc-loading-circle.ripple-primary` | First red expanding ripple |
-| `circle2` | `nfcLoadingFailedSecondaryRipple` | `.nfc-loading-circle.ripple-secondary` | Second red expanding ripple, offset after the first |
+| `circle1` | `nfcLoadingFailedPrimaryRipple` | `.nfc-loading-circle.ripple-primary` | Static outer ring, 5% opacity; ripple animation disabled |
+| `circle2` | `nfcLoadingFailedSecondaryRipple` | `.nfc-loading-circle.ripple-secondary` | Static inner ring, 10% opacity; ripple animation disabled |
 | `loaed failed` | `nfcLoadingFailedSymbol` | `.nfc-loading-failed-symbol` | CSS-rendered red failure icon |
 | `网页加载失败` | `nfcWebLoadingFailedCopy` | `.nfc-loading-copy` | User-facing copy |
 

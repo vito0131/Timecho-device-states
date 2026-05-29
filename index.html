@@ -148,27 +148,40 @@
       }
 
       .standby-card-placement-card {
+        --standby-card-drop: 15px;
         position: absolute;
         left: 18.68%;
         top: -7.89%;
         width: 39.34%;
         height: auto;
         display: block;
-        animation: standby-card-loop 1.9s ease-in-out infinite;
+        opacity: 0;
+        transform: translate3d(0, 0, 0);
+        animation: standby-card-loop 2.1s ease-in-out infinite;
         will-change: transform, opacity;
       }
 
       @keyframes standby-card-loop {
-        0%,
-        100% {
-          opacity: 0.86;
-          transform: translate3d(0, -5px, 0);
+        0% {
+          opacity: 0;
+          transform: translate3d(0, 0, 0);
         }
 
-        48%,
-        58% {
+        16% {
           opacity: 1;
-          transform: translate3d(0, 2px, 0);
+          transform: translate3d(0, 0, 0);
+        }
+
+        54%,
+        60% {
+          opacity: 1;
+          transform: translate3d(0, var(--standby-card-drop), 0);
+        }
+
+        70%,
+        100% {
+          opacity: 0;
+          transform: translate3d(0, var(--standby-card-drop), 0);
         }
       }
 
@@ -377,18 +390,18 @@
         width: 100%;
         height: 100%;
         border: 2px solid rgba(var(--ripple-color), 0.5);
-        opacity: 0;
-        transform: translate(-50%, -50%) scale(0.34);
-        will-change: opacity, transform;
+        animation: none;
+        will-change: auto;
       }
 
       .nfc-loading-circle.ripple-primary {
-        animation: nfc-circle-ripple 1.55s var(--ripple-easing) infinite;
+        opacity: 0.05;
+        transform: translate(-50%, -50%) scale(1);
       }
 
       .nfc-loading-circle.ripple-secondary {
-        animation: nfc-circle-ripple 1.55s var(--ripple-easing) infinite;
-        animation-delay: 0.58s;
+        opacity: 0.1;
+        transform: translate(-50%, -50%) scale(0.739);
       }
 
       .nfc-loading-spinner {
@@ -477,7 +490,8 @@
         top: 0;
         width: 114.1%;
         height: 130.6%;
-        opacity: 1;
+        opacity: 0.45;
+        animation: wifi-connecting-tier-1 0.72s ease-in-out infinite;
       }
 
       .nfc-wifi-connecting-tier-2 {
@@ -509,13 +523,30 @@
         display: block;
       }
 
-      @keyframes wifi-connecting-tier-2 {
+      @keyframes wifi-connecting-tier-1 {
         0%,
-        30% {
+        18% {
           opacity: 1;
         }
 
-        44%,
+        32%,
+        100% {
+          opacity: 0.45;
+        }
+      }
+
+      @keyframes wifi-connecting-tier-2 {
+        0%,
+        24% {
+          opacity: 0.45;
+        }
+
+        38%,
+        50% {
+          opacity: 1;
+        }
+
+        64%,
         100% {
           opacity: 0.45;
         }
@@ -523,16 +554,16 @@
 
       @keyframes wifi-connecting-tier-3 {
         0%,
-        34% {
+        56% {
           opacity: 0.45;
         }
 
-        50%,
-        72% {
+        70%,
+        82% {
           opacity: 1;
         }
 
-        88%,
+        96%,
         100% {
           opacity: 0.45;
         }
@@ -590,33 +621,6 @@
 
         to {
           transform: translate(-50%, -50%) rotate(360deg);
-        }
-      }
-
-      @keyframes nfc-circle-ripple {
-        0% {
-          opacity: 0;
-          transform: translate(-50%, -50%) scale(0.34);
-        }
-
-        10% {
-          opacity: 0.35;
-          transform: translate(-50%, -50%) scale(0.419);
-        }
-
-        51% {
-          opacity: 0.18;
-          transform: translate(-50%, -50%) scale(0.739);
-        }
-
-        84% {
-          opacity: 0.06;
-          transform: translate(-50%, -50%) scale(1);
-        }
-
-        100% {
-          opacity: 0;
-          transform: translate(-50%, -50%) scale(1);
         }
       }
 
