@@ -73,8 +73,8 @@ Node: 412:622
 | `放入NFC卡片-网页加载中` | `nfcWebLoadingState` | `#nfc-loading-state` | Full NFC web loading state layer |
 | `icon/wifi` | `wifiStatusIcon` | `assets/ui-icons/wifi-status.svg`, `.wifi-status-icon` | Shared top-right Wi-Fi icon |
 | `content` | `nfcWebLoadingContent` | `.nfc-loading-content` | Center content group |
-| `circle1` | `nfcLoadingInnerBreathingCircle` | `.nfc-loading-circle.circle-inner` | Inner breathing circle |
-| `circle2` | `nfcLoadingOuterBreathingCircle` | `.nfc-loading-circle.circle-outer` | Outer breathing circle |
+| `circle1` | `nfcLoadingPrimaryRipple` | `.nfc-loading-circle.ripple-primary` | First expanding ripple |
+| `circle2` | `nfcLoadingSecondaryRipple` | `.nfc-loading-circle.ripple-secondary` | Second expanding ripple, offset after the first |
 | `loading` | `nfcLoadingSpinner` | `.nfc-loading-spinner` | CSS spinner, rotates continuously |
 | `网页加载中` | `nfcWebLoadingCopy` | `.nfc-loading-copy` | User-facing copy |
 
@@ -94,8 +94,8 @@ nfc.webLoading.copy
 
 ```text
 nfcLoadingSpinner: 1.1s linear infinite rotation
-nfcLoadingInnerBreathingCircle: 1.45s ease-in-out opacity pulse from 10% to 35%
-nfcLoadingOuterBreathingCircle: 1.45s ease-in-out opacity pulse from 10% to 20%, offset after inner circle
+nfcLoadingPrimaryRipple: 1.55s linear expanding circle, passes through the circle1 size and keeps fading until the outer circle size
+nfcLoadingSecondaryRipple: 1.55s expanding circle, starts 0.58s after primary ripple
 ```
 
 ### Layout Reference

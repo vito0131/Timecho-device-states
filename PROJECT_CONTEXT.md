@@ -75,7 +75,7 @@ assets/
   - Uses the shared global aurora background and top-right Wi-Fi icon
   - Center content is CSS-rendered so the spinner and breathing circles can animate independently
   - Loading spinner rotates continuously
-  - `circle1` and `circle2` alternate a fast breathing effect: inner circle 10%-to-35%, outer circle 10%-to-20%
+  - `circle1` and `circle2` are staggered expanding ripples that move at a consistent rate, pass through the circle1 size, then grow to the outer circle size and fade out
   - Main copy: `网页加载中`
 
 ## UI
