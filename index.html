@@ -24,6 +24,8 @@
       }
 
       .stage {
+        --ui-scale: 1;
+        --aurora-scale: 1;
         width: 100vw;
         height: 100vh;
         position: relative;
@@ -36,7 +38,7 @@
         inset: 0;
         width: 100%;
         height: 100%;
-        transform: rotate(180deg);
+        transform: rotate(180deg) scaleY(var(--aurora-scale));
         z-index: 0;
       }
 
@@ -60,7 +62,12 @@
 
       .standby-ui,
       .nfc-loading-ui,
-      .nfc-failed-ui {
+      .nfc-wifi-connecting-ui,
+      .nfc-wifi-disconnected-ui,
+      .nfc-wifi-connected-ui,
+      .nfc-wifi-connection-failed-ui,
+      .nfc-loading-failed-ui,
+      .read-card-failed-ui {
         position: absolute;
         inset: 0;
         z-index: 11;
@@ -71,13 +78,23 @@
 
       .standby-ui[hidden],
       .nfc-loading-ui[hidden],
-      .nfc-failed-ui[hidden] {
+      .nfc-wifi-connecting-ui[hidden],
+      .nfc-wifi-disconnected-ui[hidden],
+      .nfc-wifi-connected-ui[hidden],
+      .nfc-wifi-connection-failed-ui[hidden],
+      .nfc-loading-failed-ui[hidden],
+      .read-card-failed-ui[hidden] {
         display: none;
       }
 
       .standby-ui.is-active,
       .nfc-loading-ui.is-active,
-      .nfc-failed-ui.is-active {
+      .nfc-wifi-connecting-ui.is-active,
+      .nfc-wifi-disconnected-ui.is-active,
+      .nfc-wifi-connected-ui.is-active,
+      .nfc-wifi-connection-failed-ui.is-active,
+      .nfc-loading-failed-ui.is-active,
+      .read-card-failed-ui.is-active {
         opacity: 1;
       }
 
@@ -87,16 +104,18 @@
         right: clamp(24px, 7.8125vw, 100px);
         width: 34px;
         height: 34px;
+        transform: scale(var(--ui-scale));
+        transform-origin: top right;
       }
 
       .standby-card-content {
         --standby-y: 0px;
         position: absolute;
         left: 50%;
-        top: 54.3%;
+        top: calc(50% + 21px);
         width: min(70vw, 272px);
         opacity: 1;
-        transform: translate(-50%, calc(-50% + var(--standby-y)));
+        transform: translate(-50%, calc(-50% + var(--standby-y))) scale(var(--ui-scale));
         transition:
           opacity 360ms ease-in-out,
           transform 320ms ease-in-out;
@@ -122,7 +141,7 @@
       .standby-card-timecho {
         position: absolute;
         left: 4.41%;
-        top: 11.11%;
+        top: 5.56%;
         width: 94.94%;
         height: auto;
         display: block;
@@ -131,7 +150,7 @@
       .standby-card-placement-card {
         position: absolute;
         left: 18.68%;
-        top: -2.33%;
+        top: -7.89%;
         width: 39.34%;
         height: auto;
         display: block;
@@ -162,8 +181,120 @@
         white-space: nowrap;
       }
 
+      .read-card-failed-content {
+        --read-card-y: 0px;
+        position: absolute;
+        left: 50%;
+        top: calc(50% + 35px);
+        width: min(70vw, 272px);
+        opacity: 1;
+        transform: translate(-50%, calc(-50% + var(--read-card-y))) scale(var(--ui-scale));
+        transition:
+          opacity 360ms ease-in-out,
+          transform 320ms ease-in-out;
+        will-change: opacity, transform;
+      }
+
+      .read-card-failed-content.is-exiting {
+        --read-card-y: 5px;
+        opacity: 0;
+      }
+
+      .read-card-failed-content.is-entering {
+        opacity: 0;
+        transition-duration: 0ms;
+      }
+
+      .read-card-failed-visual {
+        position: relative;
+        width: 100%;
+        aspect-ratio: 272 / 163;
+      }
+
+      .read-card-failed-timecho {
+        position: absolute;
+        left: 4.41%;
+        top: 1.84%;
+        width: 94.94%;
+        height: auto;
+        display: block;
+      }
+
+      .read-card-failed-card {
+        position: absolute;
+        left: 20.22%;
+        top: 1.84%;
+        width: 34.56%;
+        aspect-ratio: 94 / 57;
+        border: 2.5px solid #e3e2db;
+        border-radius: 1px;
+        background: linear-gradient(
+          121.78deg,
+          rgb(185, 187, 186) 0%,
+          rgb(230, 231, 230) 34.24%,
+          rgb(197, 199, 197) 68.99%,
+          rgb(207, 208, 207) 86.37%,
+          rgb(167, 171, 170) 100%
+        );
+        box-shadow: 2px -1px 3.7px rgba(0, 0, 0, 0.2);
+      }
+
+      .read-card-failed-matrix {
+        position: absolute;
+        left: 15.07%;
+        top: 49.69%;
+        width: 45.22%;
+        aspect-ratio: 123 / 43;
+        opacity: 0;
+        animation: read-card-failed-signal 3.2s ease-in-out infinite;
+        filter: drop-shadow(0 0 5px rgba(255, 255, 255, 0.46));
+        will-change: opacity, filter;
+      }
+
+      .read-card-failed-dot {
+        position: absolute;
+        width: 2.439%;
+        aspect-ratio: 1;
+        border-radius: 50%;
+        background: rgba(255, 255, 255, 0.93);
+      }
+
+      .read-card-failed-copy {
+        margin: 30px 0 0;
+        padding: 16px 24px;
+        color: #fff;
+        font: 500 22px/1.4 "PingFang SC", "PingFang TC", "Noto Sans SC", system-ui, sans-serif;
+        letter-spacing: 0;
+        text-align: center;
+        white-space: nowrap;
+      }
+
+      @keyframes read-card-failed-signal {
+        0%,
+        12% {
+          opacity: 0;
+          filter: drop-shadow(0 0 0 rgba(255, 255, 255, 0));
+        }
+
+        18%,
+        62% {
+          opacity: 1;
+          filter: drop-shadow(0 0 5px rgba(255, 255, 255, 0.46));
+        }
+
+        76%,
+        100% {
+          opacity: 0;
+          filter: drop-shadow(0 0 0 rgba(255, 255, 255, 0));
+        }
+      }
+
       .nfc-loading-content,
-      .nfc-failed-content {
+      .nfc-wifi-connecting-content,
+      .nfc-wifi-disconnected-content,
+      .nfc-wifi-connected-content,
+      .nfc-wifi-connection-failed-content,
+      .nfc-loading-failed-content {
         --loading-y: 0px;
         position: absolute;
         left: 50%;
@@ -174,7 +305,7 @@
         align-items: center;
         gap: 30px;
         opacity: 1;
-        transform: translate(-50%, calc(-50% + var(--loading-y)));
+        transform: translate(-50%, calc(-50% + var(--loading-y))) scale(var(--ui-scale));
         transition:
           opacity 360ms ease-in-out,
           transform 320ms ease-in-out;
@@ -182,13 +313,21 @@
       }
 
       .nfc-loading-content.is-exiting,
-      .nfc-failed-content.is-exiting {
+      .nfc-wifi-connecting-content.is-exiting,
+      .nfc-wifi-disconnected-content.is-exiting,
+      .nfc-wifi-connected-content.is-exiting,
+      .nfc-wifi-connection-failed-content.is-exiting,
+      .nfc-loading-failed-content.is-exiting {
         --loading-y: 5px;
         opacity: 0;
       }
 
       .nfc-loading-content.is-entering,
-      .nfc-failed-content.is-entering {
+      .nfc-wifi-connecting-content.is-entering,
+      .nfc-wifi-disconnected-content.is-entering,
+      .nfc-wifi-connected-content.is-entering,
+      .nfc-wifi-connection-failed-content.is-entering,
+      .nfc-loading-failed-content.is-entering {
         opacity: 0;
         transition-duration: 0ms;
       }
@@ -201,8 +340,28 @@
         aspect-ratio: 1;
       }
 
-      .nfc-failed-indicator {
+      .nfc-loading-failed-indicator {
         --ripple-color: 255, 60, 57;
+        width: min(61.45%, 161px);
+      }
+
+      .nfc-wifi-disconnected-indicator {
+        --ripple-color: 255, 230, 10;
+        width: min(61.45%, 161px);
+      }
+
+      .nfc-wifi-connection-failed-indicator {
+        --ripple-color: 255, 230, 10;
+        width: min(61.45%, 161px);
+      }
+
+      .nfc-wifi-connecting-indicator {
+        --ripple-color: 255, 230, 10;
+        width: min(61.45%, 161px);
+      }
+
+      .nfc-wifi-connected-indicator {
+        --ripple-color: 39, 255, 10;
         width: min(61.45%, 161px);
       }
 
@@ -258,7 +417,128 @@
         stroke-linecap: round;
       }
 
-      .nfc-failed-symbol {
+      .nfc-wifi-disconnected-symbol {
+        position: absolute;
+        left: 50%;
+        top: 50%;
+        width: 42.25%;
+        aspect-ratio: 1;
+        padding: 6%;
+        border-radius: 50%;
+        filter: drop-shadow(0 0 24px rgba(255, 230, 10, 0.9));
+        transform: translate(-50%, -50%);
+      }
+
+      .nfc-wifi-disconnected-symbol img {
+        width: 100%;
+        height: 100%;
+        display: block;
+      }
+
+      .nfc-wifi-connection-failed-symbol {
+        position: absolute;
+        left: 50%;
+        top: 50%;
+        width: 42.25%;
+        aspect-ratio: 1;
+        padding: 6%;
+        border-radius: 50%;
+        filter: drop-shadow(0 0 24px rgba(255, 230, 10, 0.9));
+        transform: translate(-50%, -50%);
+      }
+
+      .nfc-wifi-connection-failed-symbol img {
+        width: 100%;
+        height: 100%;
+        display: block;
+      }
+
+      .nfc-wifi-connecting-symbol {
+        position: absolute;
+        left: 50%;
+        top: 50%;
+        width: 42.86%;
+        aspect-ratio: 1;
+        filter: drop-shadow(0 0 24px rgba(255, 230, 10, 0.9));
+        transform: translate(-50%, -52%);
+      }
+
+      .nfc-wifi-connecting-tier {
+        position: absolute;
+        left: 0;
+        top: 0;
+        width: 100%;
+        height: 100%;
+        display: block;
+      }
+
+      .nfc-wifi-connecting-tier-1 {
+        left: -7.05%;
+        top: 0;
+        width: 114.1%;
+        height: 130.6%;
+        opacity: 1;
+      }
+
+      .nfc-wifi-connecting-tier-2 {
+        left: -26.74%;
+        top: -5.14%;
+        width: 151.98%;
+        height: 111.65%;
+        opacity: 0.45;
+        animation: wifi-connecting-tier-2 0.72s ease-in-out infinite;
+      }
+
+      .nfc-wifi-connecting-tier-3 {
+        opacity: 0.45;
+        animation: wifi-connecting-tier-3 0.72s ease-in-out infinite;
+      }
+
+      .nfc-wifi-connected-symbol {
+        position: absolute;
+        left: 50%;
+        top: 50%;
+        width: 78.26%;
+        aspect-ratio: 1;
+        transform: translate(-50%, -50%);
+      }
+
+      .nfc-wifi-connected-symbol img {
+        width: 100%;
+        height: 100%;
+        display: block;
+      }
+
+      @keyframes wifi-connecting-tier-2 {
+        0%,
+        30% {
+          opacity: 1;
+        }
+
+        44%,
+        100% {
+          opacity: 0.45;
+        }
+      }
+
+      @keyframes wifi-connecting-tier-3 {
+        0%,
+        34% {
+          opacity: 0.45;
+        }
+
+        50%,
+        72% {
+          opacity: 1;
+        }
+
+        88%,
+        100% {
+          opacity: 0.45;
+        }
+      }
+
+      .nfc-loading-failed-symbol {
         position: absolute;
         left: 50%;
         top: 50%;
@@ -270,8 +550,8 @@
         transform: translate(-50%, -50%);
       }
 
-      .nfc-failed-symbol::before,
-      .nfc-failed-symbol::after {
+      .nfc-loading-failed-symbol::before,
+      .nfc-loading-failed-symbol::after {
         position: absolute;
         left: 50%;
         border-radius: 999px;
@@ -280,13 +560,13 @@
         transform: translateX(-50%);
       }
 
-      .nfc-failed-symbol::before {
+      .nfc-loading-failed-symbol::before {
         top: 16%;
         width: 13%;
         height: 45%;
       }
 
-      .nfc-failed-symbol::after {
+      .nfc-loading-failed-symbol::after {
         bottom: 15.5%;
         width: 15.5%;
         aspect-ratio: 1;
@@ -345,7 +625,7 @@
         aspect-ratio: 400 / 226;
         pointer-events: auto;
         opacity: 1;
-        transform: translateY(0);
+        transform: translateY(0) scale(var(--ui-scale));
         transition:
           opacity 180ms ease-in-out,
           transform 160ms ease-in-out;
@@ -368,13 +648,13 @@
 
       .splash-logo-wrap.is-exiting {
         opacity: 0;
-        transform: translateY(5px);
+        transform: translateY(5px) scale(var(--ui-scale));
         transition-duration: 160ms;
       }
 
       .splash-logo-wrap.is-entering {
         opacity: 0;
-        transform: translateY(0);
+        transform: translateY(0) scale(var(--ui-scale));
         transition-duration: 0ms;
       }
 
@@ -487,6 +767,10 @@
         .standby-card-instruction {
           font-size: 18px;
         }
+
+        .read-card-failed-copy {
+          font-size: 18px;
+        }
       }
 
       @media (prefers-reduced-motion: reduce) {
@@ -495,19 +779,41 @@
         }
 
         .splash-logo-wrap.is-exiting {
-          transform: translateY(0);
+          transform: translateY(0) scale(var(--ui-scale));
         }
 
         .standby-ui,
         .standby-card-content,
+        .read-card-failed-ui,
+        .read-card-failed-content,
         .nfc-loading-ui,
         .nfc-loading-content,
-        .nfc-failed-ui,
-        .nfc-failed-content {
+        .nfc-wifi-connecting-ui,
+        .nfc-wifi-connecting-content,
+        .nfc-wifi-disconnected-ui,
+        .nfc-wifi-disconnected-content,
+        .nfc-wifi-connected-ui,
+        .nfc-wifi-connected-content,
+        .nfc-wifi-connection-failed-ui,
+        .nfc-wifi-connection-failed-content,
+        .nfc-loading-failed-ui,
+        .nfc-loading-failed-content {
           transition: none;
         }
 
         .standby-card-placement-card {
+          animation: none;
+        }
+
+        .read-card-failed-matrix {
+          opacity: 1;
+          animation: none;
+          filter: drop-shadow(0 0 5px rgba(255, 255, 255, 0.46));
+        }
+
+        .nfc-wifi-connecting-tier-2,
+        .nfc-wifi-connecting-tier-3 {
+          opacity: 1;
           animation: none;
         }
 
@@ -615,6 +921,24 @@
         </div>
       </div>
 
+      <div class="read-card-failed-ui" id="read-card-failed-state" hidden aria-label="Read card failed state">
+        <img class="wifi-status-icon" src="assets/ui-icons/wifi-status.svg" alt="Wi-Fi connected" />
+        <div class="read-card-failed-content" id="read-card-failed-content">
+          <div class="read-card-failed-visual" aria-label="Read card failed indicator">
+            <img
+              class="read-card-failed-timecho"
+              src="assets/ui-icons/standby-timecho.png"
+              alt=""
+              width="259"
+              height="161"
+            />
+            <span class="read-card-failed-card" aria-hidden="true"></span>
+            <span class="read-card-failed-matrix" id="read-card-failed-matrix" aria-hidden="true"></span>
+          </div>
+          <p class="read-card-failed-copy">读卡失败</p>
+        </div>
+      </div>
+
       <div class="nfc-loading-ui" id="nfc-loading-state" hidden aria-label="NFC web loading state">
         <img class="wifi-status-icon" src="assets/ui-icons/wifi-status.svg" alt="Wi-Fi connected" />
         <div class="nfc-loading-content" id="nfc-loading-content">
@@ -630,13 +954,101 @@
         </div>
       </div>
 
-      <div class="nfc-failed-ui" id="nfc-failed-state" hidden aria-label="NFC web loading failed state">
-        <img class="wifi-status-icon" src="assets/ui-icons/wifi-status.svg" alt="Wi-Fi connected" />
-        <div class="nfc-failed-content" id="nfc-failed-content">
-          <div class="nfc-loading-indicator nfc-failed-indicator" aria-label="Loading failed">
+      <div
+        class="nfc-wifi-disconnected-ui"
+        id="nfc-wifi-disconnected-state"
+        hidden
+        aria-label="NFC Wi-Fi disconnected state"
+      >
+        <img class="wifi-status-icon" src="assets/ui-icons/wifi-failed.svg" alt="Wi-Fi disconnected" />
+        <div class="nfc-wifi-disconnected-content" id="nfc-wifi-disconnected-content">
+          <div class="nfc-loading-indicator nfc-wifi-disconnected-indicator" aria-label="Wi-Fi disconnected">
             <span class="nfc-loading-circle ripple-primary" aria-hidden="true"></span>
             <span class="nfc-loading-circle ripple-secondary" aria-hidden="true"></span>
-            <span class="nfc-failed-symbol" aria-hidden="true"></span>
+            <span class="nfc-wifi-disconnected-symbol" aria-hidden="true">
+              <img src="assets/ui-icons/wifi-failed.svg" alt="" />
+            </span>
+          </div>
+          <p class="nfc-loading-copy">Wi-Fi未连接</p>
+        </div>
+      </div>
+
+      <div class="nfc-wifi-connecting-ui" id="nfc-wifi-connecting-state" hidden aria-label="NFC Wi-Fi connecting state">
+        <img class="wifi-status-icon" src="assets/ui-icons/wifi-failed.svg" alt="Wi-Fi connecting" />
+        <div class="nfc-wifi-connecting-content" id="nfc-wifi-connecting-content">
+          <div class="nfc-loading-indicator nfc-wifi-connecting-indicator" aria-label="Wi-Fi connecting">
+            <span class="nfc-loading-circle ripple-primary" aria-hidden="true"></span>
+            <span class="nfc-loading-circle ripple-secondary" aria-hidden="true"></span>
+            <span class="nfc-wifi-connecting-symbol" aria-hidden="true">
+              <img
+                class="nfc-wifi-connecting-tier nfc-wifi-connecting-tier-3"
+                src="assets/ui-icons/wifi-connecting-tier-3.svg"
+                alt=""
+              />
+              <img
+                class="nfc-wifi-connecting-tier nfc-wifi-connecting-tier-2"
+                src="assets/ui-icons/wifi-connecting-tier-2.svg"
+                alt=""
+              />
+              <img
+                class="nfc-wifi-connecting-tier nfc-wifi-connecting-tier-1"
+                src="assets/ui-icons/wifi-connecting-tier-1.svg"
+                alt=""
+              />
+            </span>
+          </div>
+          <p class="nfc-loading-copy">Wi-Fi连接中...</p>
+        </div>
+      </div>
+
+      <div class="nfc-wifi-connected-ui" id="nfc-wifi-connected-state" hidden aria-label="NFC Wi-Fi connected state">
+        <img class="wifi-status-icon" src="assets/ui-icons/wifi-status.svg" alt="Wi-Fi connected" />
+        <div class="nfc-wifi-connected-content" id="nfc-wifi-connected-content">
+          <div class="nfc-loading-indicator nfc-wifi-connected-indicator" aria-label="Wi-Fi connected">
+            <span class="nfc-loading-circle ripple-primary" aria-hidden="true"></span>
+            <span class="nfc-loading-circle ripple-secondary" aria-hidden="true"></span>
+            <span class="nfc-wifi-connected-symbol" aria-hidden="true">
+              <img src="assets/ui-icons/wifi-success.svg" alt="" />
+            </span>
+          </div>
+          <p class="nfc-loading-copy">Wi-Fi连接成功</p>
+        </div>
+      </div>
+
+      <div
+        class="nfc-wifi-connection-failed-ui"
+        id="nfc-wifi-connection-failed-state"
+        hidden
+        aria-label="NFC Wi-Fi connection failed state"
+      >
+        <img class="wifi-status-icon" src="assets/ui-icons/wifi-failed.svg" alt="Wi-Fi connection failed" />
+        <div class="nfc-wifi-connection-failed-content" id="nfc-wifi-connection-failed-content">
+          <div
+            class="nfc-loading-indicator nfc-wifi-connection-failed-indicator"
+            aria-label="Wi-Fi connection failed"
+          >
+            <span class="nfc-loading-circle ripple-primary" aria-hidden="true"></span>
+            <span class="nfc-loading-circle ripple-secondary" aria-hidden="true"></span>
+            <span class="nfc-wifi-connection-failed-symbol" aria-hidden="true">
+              <img src="assets/ui-icons/wifi-failed.svg" alt="" />
+            </span>
+          </div>
+          <p class="nfc-loading-copy">Wi-Fi连接失败</p>
+        </div>
+      </div>
+
+      <div
+        class="nfc-loading-failed-ui"
+        id="nfc-loading-failed-state"
+        hidden
+        aria-label="NFC web loading failed state"
+      >
+        <img class="wifi-status-icon" src="assets/ui-icons/wifi-status.svg" alt="Wi-Fi connected" />
+        <div class="nfc-loading-failed-content" id="nfc-loading-failed-content">
+          <div class="nfc-loading-indicator nfc-loading-failed-indicator" aria-label="Loading failed">
+            <span class="nfc-loading-circle ripple-primary" aria-hidden="true"></span>
+            <span class="nfc-loading-circle ripple-secondary" aria-hidden="true"></span>
+            <span class="nfc-loading-failed-symbol" aria-hidden="true"></span>
           </div>
           <p class="nfc-loading-copy">网页加载失败</p>
         </div>
@@ -644,6 +1056,7 @@
     </main>
 
     <script>
+      const stage = document.querySelector(".stage");
       const canvas = document.getElementById("aurora");
       const gl = canvas.getContext("webgl2", {
         alpha: true,
@@ -656,6 +1069,17 @@
       const amplitude = 0.8;
       const blend = 1.0;
       const speed = 0.55;
+
+      function updateDisplayScale() {
+        const designScale = Math.min(window.innerWidth / 1280, window.innerHeight / 720);
+        const uiScale = Math.min(1.65, Math.max(1, designScale));
+        const auroraScale = Math.min(1.2, 1 + Math.max(0, uiScale - 1) * 0.28);
+        stage.style.setProperty("--ui-scale", uiScale.toFixed(3));
+        stage.style.setProperty("--aurora-scale", auroraScale.toFixed(3));
+      }
+
+      updateDisplayScale();
+      window.addEventListener("resize", updateDisplayScale);
 
       const vertexSource = `#version 300 es
 in vec2 position;
@@ -841,11 +1265,87 @@ void main() {
       const logoWrap = document.querySelector(".splash-logo-wrap");
       const standbyUi = document.getElementById("standby-state");
       const standbyCardContent = document.getElementById("standby-card-content");
+      const readCardFailedUi = document.getElementById("read-card-failed-state");
+      const readCardFailedContent = document.getElementById("read-card-failed-content");
+      const readCardFailedMatrix = document.getElementById("read-card-failed-matrix");
       const nfcLoadingUi = document.getElementById("nfc-loading-state");
       const nfcLoadingContent = document.getElementById("nfc-loading-content");
-      const nfcFailedUi = document.getElementById("nfc-failed-state");
-      const nfcFailedContent = document.getElementById("nfc-failed-content");
+      const nfcWifiConnectingUi = document.getElementById("nfc-wifi-connecting-state");
+      const nfcWifiConnectingContent = document.getElementById("nfc-wifi-connecting-content");
+      const nfcWifiDisconnectedUi = document.getElementById("nfc-wifi-disconnected-state");
+      const nfcWifiDisconnectedContent = document.getElementById("nfc-wifi-disconnected-content");
+      const nfcWifiConnectedUi = document.getElementById("nfc-wifi-connected-state");
+      const nfcWifiConnectedContent = document.getElementById("nfc-wifi-connected-content");
+      const nfcWifiConnectionFailedUi = document.getElementById("nfc-wifi-connection-failed-state");
+      const nfcWifiConnectionFailedContent = document.getElementById("nfc-wifi-connection-failed-content");
+      const nfcLoadingFailedUi = document.getElementById("nfc-loading-failed-state");
+      const nfcLoadingFailedContent = document.getElementById("nfc-loading-failed-content");
       const auroraLayer = document.querySelector(".aurora-layer");
+      const readCardFailedDots = [
+        [65, 0],
+        [60, 5],
+        [65, 5],
+        [70, 5],
+        [55, 10],
+        [60, 10],
+        [65, 10],
+        [70, 10],
+        [75, 10],
+        [0, 20],
+        [5, 20],
+        [10, 20],
+        [15, 20],
+        [20, 20],
+        [35, 20],
+        [40, 20],
+        [45, 20],
+        [50, 20],
+        [55, 20],
+        [75, 20],
+        [80, 20],
+        [85, 20],
+        [105, 20],
+        [0, 25],
+        [35, 25],
+        [55, 25],
+        [80, 25],
+        [105, 25],
+        [0, 30],
+        [5, 30],
+        [10, 30],
+        [15, 30],
+        [35, 30],
+        [40, 30],
+        [45, 30],
+        [50, 30],
+        [55, 30],
+        [80, 30],
+        [105, 30],
+        [0, 35],
+        [35, 35],
+        [55, 35],
+        [80, 35],
+        [105, 35],
+        [0, 40],
+        [35, 40],
+        [55, 40],
+        [75, 40],
+        [80, 40],
+        [85, 40],
+        [105, 40],
+        [110, 40],
+        [115, 40],
+        [120, 40],
+      ];
+
+      readCardFailedDots.forEach(([x, y]) => {
+        const dot = document.createElement("span");
+        dot.className = "read-card-failed-dot";
+        dot.style.left = `${(x / 123) * 100}%`;
+        dot.style.top = `${(y / 43) * 100}%`;
+        readCardFailedMatrix.appendChild(dot);
+      });
+
       const contentStates = [
         {
           id: "boot",
@@ -863,14 +1363,39 @@ void main() {
           view: "standby",
         },
         {
+          id: "read-card-failed",
+          label: "读卡失败",
+          view: "read-card-failed",
+        },
+        {
+          id: "nfc-wifi-disconnected",
+          label: "Wi-Fi未连接",
+          view: "nfc-wifi-disconnected",
+        },
+        {
+          id: "nfc-wifi-connecting",
+          label: "Wi-Fi连接中",
+          view: "nfc-wifi-connecting",
+        },
+        {
+          id: "nfc-wifi-connected",
+          label: "Wi-Fi连接成功",
+          view: "nfc-wifi-connected",
+        },
+        {
+          id: "nfc-wifi-connection-failed",
+          label: "Wi-Fi连接失败",
+          view: "nfc-wifi-connection-failed",
+        },
+        {
           id: "nfc-web-loading",
           label: "加载",
           view: "nfc-loading",
         },
         {
-          id: "nfc-web-failed",
-          label: "失败",
-          view: "nfc-failed",
+          id: "nfc-web-loading-failed",
+          label: "加载失败",
+          view: "nfc-loading-failed",
         },
       ];
       const shutdownState = {
@@ -1000,22 +1525,63 @@ void main() {
         logoWrap.hidden = false;
         standbyUi.classList.remove("is-active");
         standbyUi.hidden = true;
+        readCardFailedUi.classList.remove("is-active");
+        readCardFailedUi.hidden = true;
         nfcLoadingUi.classList.remove("is-active");
         nfcLoadingUi.hidden = true;
-        nfcFailedUi.classList.remove("is-active");
-        nfcFailedUi.hidden = true;
+        nfcWifiConnectingUi.classList.remove("is-active");
+        nfcWifiConnectingUi.hidden = true;
+        nfcWifiDisconnectedUi.classList.remove("is-active");
+        nfcWifiDisconnectedUi.hidden = true;
+        nfcWifiConnectedUi.classList.remove("is-active");
+        nfcWifiConnectedUi.hidden = true;
+        nfcWifiConnectionFailedUi.classList.remove("is-active");
+        nfcWifiConnectionFailedUi.hidden = true;
+        nfcLoadingFailedUi.classList.remove("is-active");
+        nfcLoadingFailedUi.hidden = true;
         activeView = "sequence";
       }
 
       function showStandbyLayer() {
         standbyUi.hidden = false;
         standbyUi.classList.add("is-active");
+        readCardFailedUi.classList.remove("is-active");
+        readCardFailedUi.hidden = true;
         nfcLoadingUi.classList.remove("is-active");
         nfcLoadingUi.hidden = true;
-        nfcFailedUi.classList.remove("is-active");
-        nfcFailedUi.hidden = true;
+        nfcWifiConnectingUi.classList.remove("is-active");
+        nfcWifiConnectingUi.hidden = true;
+        nfcWifiDisconnectedUi.classList.remove("is-active");
+        nfcWifiDisconnectedUi.hidden = true;
+        nfcWifiConnectedUi.classList.remove("is-active");
+        nfcWifiConnectedUi.hidden = true;
+        nfcWifiConnectionFailedUi.classList.remove("is-active");
+        nfcWifiConnectionFailedUi.hidden = true;
+        nfcLoadingFailedUi.classList.remove("is-active");
+        nfcLoadingFailedUi.hidden = true;
         logoWrap.hidden = true;
         activeView = "standby";
+      }
+
+      function showReadCardFailedLayer() {
+        readCardFailedUi.hidden = false;
+        readCardFailedUi.classList.add("is-active");
+        standbyUi.classList.remove("is-active");
+        standbyUi.hidden = true;
+        nfcLoadingUi.classList.remove("is-active");
+        nfcLoadingUi.hidden = true;
+        nfcWifiConnectingUi.classList.remove("is-active");
+        nfcWifiConnectingUi.hidden = true;
+        nfcWifiDisconnectedUi.classList.remove("is-active");
+        nfcWifiDisconnectedUi.hidden = true;
+        nfcWifiConnectedUi.classList.remove("is-active");
+        nfcWifiConnectedUi.hidden = true;
+        nfcWifiConnectionFailedUi.classList.remove("is-active");
+        nfcWifiConnectionFailedUi.hidden = true;
+        nfcLoadingFailedUi.classList.remove("is-active");
+        nfcLoadingFailedUi.hidden = true;
+        logoWrap.hidden = true;
+        activeView = "read-card-failed";
       }
 
       function showNfcLoadingLayer() {
@@ -1023,21 +1589,125 @@ void main() {
         nfcLoadingUi.classList.add("is-active");
         standbyUi.classList.remove("is-active");
         standbyUi.hidden = true;
-        nfcFailedUi.classList.remove("is-active");
-        nfcFailedUi.hidden = true;
+        readCardFailedUi.classList.remove("is-active");
+        readCardFailedUi.hidden = true;
+        nfcWifiConnectingUi.classList.remove("is-active");
+        nfcWifiConnectingUi.hidden = true;
+        nfcWifiDisconnectedUi.classList.remove("is-active");
+        nfcWifiDisconnectedUi.hidden = true;
+        nfcWifiConnectedUi.classList.remove("is-active");
+        nfcWifiConnectedUi.hidden = true;
+        nfcWifiConnectionFailedUi.classList.remove("is-active");
+        nfcWifiConnectionFailedUi.hidden = true;
+        nfcLoadingFailedUi.classList.remove("is-active");
+        nfcLoadingFailedUi.hidden = true;
         logoWrap.hidden = true;
         activeView = "nfc-loading";
       }
 
-      function showNfcFailedLayer() {
-        nfcFailedUi.hidden = false;
-        nfcFailedUi.classList.add("is-active");
+      function showNfcWifiConnectingLayer() {
+        nfcWifiConnectingUi.hidden = false;
+        nfcWifiConnectingUi.classList.add("is-active");
         standbyUi.classList.remove("is-active");
         standbyUi.hidden = true;
+        readCardFailedUi.classList.remove("is-active");
+        readCardFailedUi.hidden = true;
         nfcLoadingUi.classList.remove("is-active");
         nfcLoadingUi.hidden = true;
+        nfcWifiDisconnectedUi.classList.remove("is-active");
+        nfcWifiDisconnectedUi.hidden = true;
+        nfcWifiConnectedUi.classList.remove("is-active");
+        nfcWifiConnectedUi.hidden = true;
+        nfcWifiConnectionFailedUi.classList.remove("is-active");
+        nfcWifiConnectionFailedUi.hidden = true;
+        nfcLoadingFailedUi.classList.remove("is-active");
+        nfcLoadingFailedUi.hidden = true;
         logoWrap.hidden = true;
-        activeView = "nfc-failed";
+        activeView = "nfc-wifi-connecting";
+      }
+
+      function showNfcWifiConnectedLayer() {
+        nfcWifiConnectedUi.hidden = false;
+        nfcWifiConnectedUi.classList.add("is-active");
+        standbyUi.classList.remove("is-active");
+        standbyUi.hidden = true;
+        readCardFailedUi.classList.remove("is-active");
+        readCardFailedUi.hidden = true;
+        nfcLoadingUi.classList.remove("is-active");
+        nfcLoadingUi.hidden = true;
+        nfcWifiConnectingUi.classList.remove("is-active");
+        nfcWifiConnectingUi.hidden = true;
+        nfcWifiDisconnectedUi.classList.remove("is-active");
+        nfcWifiDisconnectedUi.hidden = true;
+        nfcWifiConnectionFailedUi.classList.remove("is-active");
+        nfcWifiConnectionFailedUi.hidden = true;
+        nfcLoadingFailedUi.classList.remove("is-active");
+        nfcLoadingFailedUi.hidden = true;
+        logoWrap.hidden = true;
+        activeView = "nfc-wifi-connected";
+      }
+
+      function showNfcWifiConnectionFailedLayer() {
+        nfcWifiConnectionFailedUi.hidden = false;
+        nfcWifiConnectionFailedUi.classList.add("is-active");
+        standbyUi.classList.remove("is-active");
+        standbyUi.hidden = true;
+        readCardFailedUi.classList.remove("is-active");
+        readCardFailedUi.hidden = true;
+        nfcLoadingUi.classList.remove("is-active");
+        nfcLoadingUi.hidden = true;
+        nfcWifiConnectingUi.classList.remove("is-active");
+        nfcWifiConnectingUi.hidden = true;
+        nfcWifiDisconnectedUi.classList.remove("is-active");
+        nfcWifiDisconnectedUi.hidden = true;
+        nfcWifiConnectedUi.classList.remove("is-active");
+        nfcWifiConnectedUi.hidden = true;
+        nfcLoadingFailedUi.classList.remove("is-active");
+        nfcLoadingFailedUi.hidden = true;
+        logoWrap.hidden = true;
+        activeView = "nfc-wifi-connection-failed";
+      }
+
+      function showNfcWifiDisconnectedLayer() {
+        nfcWifiDisconnectedUi.hidden = false;
+        nfcWifiDisconnectedUi.classList.add("is-active");
+        standbyUi.classList.remove("is-active");
+        standbyUi.hidden = true;
+        readCardFailedUi.classList.remove("is-active");
+        readCardFailedUi.hidden = true;
+        nfcLoadingUi.classList.remove("is-active");
+        nfcLoadingUi.hidden = true;
+        nfcWifiConnectingUi.classList.remove("is-active");
+        nfcWifiConnectingUi.hidden = true;
+        nfcWifiConnectedUi.classList.remove("is-active");
+        nfcWifiConnectedUi.hidden = true;
+        nfcWifiConnectionFailedUi.classList.remove("is-active");
+        nfcWifiConnectionFailedUi.hidden = true;
+        nfcLoadingFailedUi.classList.remove("is-active");
+        nfcLoadingFailedUi.hidden = true;
+        logoWrap.hidden = true;
+        activeView = "nfc-wifi-disconnected";
+      }
+
+      function showNfcLoadingFailedLayer() {
+        nfcLoadingFailedUi.hidden = false;
+        nfcLoadingFailedUi.classList.add("is-active");
+        standbyUi.classList.remove("is-active");
+        standbyUi.hidden = true;
+        readCardFailedUi.classList.remove("is-active");
+        readCardFailedUi.hidden = true;
+        nfcLoadingUi.classList.remove("is-active");
+        nfcLoadingUi.hidden = true;
+        nfcWifiConnectingUi.classList.remove("is-active");
+        nfcWifiConnectingUi.hidden = true;
+        nfcWifiDisconnectedUi.classList.remove("is-active");
+        nfcWifiDisconnectedUi.hidden = true;
+        nfcWifiConnectedUi.classList.remove("is-active");
+        nfcWifiConnectedUi.hidden = true;
+        nfcWifiConnectionFailedUi.classList.remove("is-active");
+        nfcWifiConnectionFailedUi.hidden = true;
+        logoWrap.hidden = true;
+        activeView = "nfc-loading-failed";
       }
 
       function exitStandby() {
@@ -1051,6 +1721,20 @@ void main() {
         standbyCardContent.classList.add("is-entering");
         void standbyCardContent.offsetWidth;
         standbyCardContent.classList.remove("is-entering");
+        return wait(transitionInMs);
+      }
+
+      function exitReadCardFailed() {
+        readCardFailedContent.classList.remove("is-entering");
+        readCardFailedContent.classList.add("is-exiting");
+        return wait(transitionOutMs);
+      }
+
+      function enterReadCardFailed() {
+        readCardFailedContent.classList.remove("is-exiting");
+        readCardFailedContent.classList.add("is-entering");
+        void readCardFailedContent.offsetWidth;
+        readCardFailedContent.classList.remove("is-entering");
         return wait(transitionInMs);
       }
 
@@ -1068,24 +1752,85 @@ void main() {
         return wait(transitionInMs);
       }
 
-      function exitNfcFailed() {
-        nfcFailedContent.classList.remove("is-entering");
-        nfcFailedContent.classList.add("is-exiting");
+      function exitNfcWifiConnecting() {
+        nfcWifiConnectingContent.classList.remove("is-entering");
+        nfcWifiConnectingContent.classList.add("is-exiting");
         return wait(transitionOutMs);
       }
 
-      function enterNfcFailed() {
-        nfcFailedContent.classList.remove("is-exiting");
-        nfcFailedContent.classList.add("is-entering");
-        void nfcFailedContent.offsetWidth;
-        nfcFailedContent.classList.remove("is-entering");
+      function enterNfcWifiConnecting() {
+        nfcWifiConnectingContent.classList.remove("is-exiting");
+        nfcWifiConnectingContent.classList.add("is-entering");
+        void nfcWifiConnectingContent.offsetWidth;
+        nfcWifiConnectingContent.classList.remove("is-entering");
+        return wait(transitionInMs);
+      }
+
+      function exitNfcWifiConnected() {
+        nfcWifiConnectedContent.classList.remove("is-entering");
+        nfcWifiConnectedContent.classList.add("is-exiting");
+        return wait(transitionOutMs);
+      }
+
+      function enterNfcWifiConnected() {
+        nfcWifiConnectedContent.classList.remove("is-exiting");
+        nfcWifiConnectedContent.classList.add("is-entering");
+        void nfcWifiConnectedContent.offsetWidth;
+        nfcWifiConnectedContent.classList.remove("is-entering");
+        return wait(transitionInMs);
+      }
+
+      function exitNfcWifiConnectionFailed() {
+        nfcWifiConnectionFailedContent.classList.remove("is-entering");
+        nfcWifiConnectionFailedContent.classList.add("is-exiting");
+        return wait(transitionOutMs);
+      }
+
+      function enterNfcWifiConnectionFailed() {
+        nfcWifiConnectionFailedContent.classList.remove("is-exiting");
+        nfcWifiConnectionFailedContent.classList.add("is-entering");
+        void nfcWifiConnectionFailedContent.offsetWidth;
+        nfcWifiConnectionFailedContent.classList.remove("is-entering");
+        return wait(transitionInMs);
+      }
+
+      function exitNfcWifiDisconnected() {
+        nfcWifiDisconnectedContent.classList.remove("is-entering");
+        nfcWifiDisconnectedContent.classList.add("is-exiting");
+        return wait(transitionOutMs);
+      }
+
+      function enterNfcWifiDisconnected() {
+        nfcWifiDisconnectedContent.classList.remove("is-exiting");
+        nfcWifiDisconnectedContent.classList.add("is-entering");
+        void nfcWifiDisconnectedContent.offsetWidth;
+        nfcWifiDisconnectedContent.classList.remove("is-entering");
+        return wait(transitionInMs);
+      }
+
+      function exitNfcLoadingFailed() {
+        nfcLoadingFailedContent.classList.remove("is-entering");
+        nfcLoadingFailedContent.classList.add("is-exiting");
+        return wait(transitionOutMs);
+      }
+
+      function enterNfcLoadingFailed() {
+        nfcLoadingFailedContent.classList.remove("is-exiting");
+        nfcLoadingFailedContent.classList.add("is-entering");
+        void nfcLoadingFailedContent.offsetWidth;
+        nfcLoadingFailedContent.classList.remove("is-entering");
         return wait(transitionInMs);
       }
 
       function exitActiveView() {
         if (activeView === "standby") return exitStandby();
+        if (activeView === "read-card-failed") return exitReadCardFailed();
         if (activeView === "nfc-loading") return exitNfcLoading();
-        if (activeView === "nfc-failed") return exitNfcFailed();
+        if (activeView === "nfc-wifi-connecting") return exitNfcWifiConnecting();
+        if (activeView === "nfc-wifi-connected") return exitNfcWifiConnected();
+        if (activeView === "nfc-wifi-connection-failed") return exitNfcWifiConnectionFailed();
+        if (activeView === "nfc-wifi-disconnected") return exitNfcWifiDisconnected();
+        if (activeView === "nfc-loading-failed") return exitNfcLoadingFailed();
         return exitLogo();
       }
 
@@ -1146,14 +1891,34 @@ void main() {
           logoCtx.clearRect(0, 0, logoCanvas.width, logoCanvas.height);
           showStandbyLayer();
           await enterStandby();
+        } else if (state.view === "read-card-failed") {
+          logoCtx.clearRect(0, 0, logoCanvas.width, logoCanvas.height);
+          showReadCardFailedLayer();
+          await enterReadCardFailed();
         } else if (state.view === "nfc-loading") {
           logoCtx.clearRect(0, 0, logoCanvas.width, logoCanvas.height);
           showNfcLoadingLayer();
           await enterNfcLoading();
-        } else if (state.view === "nfc-failed") {
+        } else if (state.view === "nfc-wifi-connecting") {
           logoCtx.clearRect(0, 0, logoCanvas.width, logoCanvas.height);
-          showNfcFailedLayer();
-          await enterNfcFailed();
+          showNfcWifiConnectingLayer();
+          await enterNfcWifiConnecting();
+        } else if (state.view === "nfc-wifi-connected") {
+          logoCtx.clearRect(0, 0, logoCanvas.width, logoCanvas.height);
+          showNfcWifiConnectedLayer();
+          await enterNfcWifiConnected();
+        } else if (state.view === "nfc-wifi-connection-failed") {
+          logoCtx.clearRect(0, 0, logoCanvas.width, logoCanvas.height);
+          showNfcWifiConnectionFailedLayer();
+          await enterNfcWifiConnectionFailed();
+        } else if (state.view === "nfc-wifi-disconnected") {
+          logoCtx.clearRect(0, 0, logoCanvas.width, logoCanvas.height);
+          showNfcWifiDisconnectedLayer();
+          await enterNfcWifiDisconnected();
+        } else if (state.view === "nfc-loading-failed") {
+          logoCtx.clearRect(0, 0, logoCanvas.width, logoCanvas.height);
+          showNfcLoadingFailedLayer();
+          await enterNfcLoadingFailed();
         } else {
           showLogoLayer();
           currentFrames = frames;

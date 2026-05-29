@@ -9,6 +9,11 @@ Show device state animations for WowNow-style device flows:
 - Boot / startup loading
 - Shutdown loading
 - Standby card placement
+- Read card failure
+- Wi-Fi connecting
+- Wi-Fi connected
+- Wi-Fi disconnected
+- Wi-Fi connection failure
 - NFC web loading
 - NFC web loading failure
 - Future states such as standby, updating, connecting, etc.
@@ -42,6 +47,11 @@ assets/
   ui-icons/
     standby-card.png
     standby-timecho.png
+    wifi-connecting-tier-1.svg
+    wifi-connecting-tier-2.svg
+    wifi-connecting-tier-3.svg
+    wifi-failed.svg
+    wifi-success.svg
     wifi-status.svg
 ```
 
@@ -49,6 +59,10 @@ assets/
 
 - Background is a WebGL aurora-style glow based on the original Figma Make `Aurora.tsx` shader.
 - Background speed is slower than the original: `speed = 0.55`.
+- Large-screen scaling:
+  - The page uses `1280 x 720` as the base design size.
+  - `--ui-scale` stays at `1` at or below the base size, then grows with the viewport up to `1.65` so center icons/text and the top-right Wi-Fi status icon do not look tiny on TV-sized displays.
+  - `--aurora-scale` grows up to `1.2` on larger screens to keep the bottom glow visually fuller.
 - Boot logo sequence:
   - Path: `assets/logo-sequence`
   - 118 frames
@@ -70,6 +84,13 @@ assets/
   - Center content is separated into `standby-timecho.png` and `standby-card.png` so the card can animate independently
   - Main copy: `请将卡片放入示意处`
   - Developer naming details live in `DESIGN_HANDOFF.md`
+- Read card failure state:
+  - Figma node: `412:739`
+  - State id: `read-card-failed`
+  - Uses the shared global aurora background, top-right Wi-Fi icon, centered Timecho device, inserted card, and failure copy
+  - Reuses `standby-timecho.png` as the device base and CSS-renders the inserted card to match Figma
+  - The `failed` dot-matrix content is generated from Figma dot coordinates and loops like a signal light: appears, stays lit briefly, fades out, then appears again
+  - Main copy: `读卡失败`
 - NFC web loading state:
   - Figma node: `412:622`
   - State id: `nfc-web-loading`
@@ -78,9 +99,41 @@ assets/
   - Loading spinner rotates continuously
   - `circle1` and `circle2` are staggered expanding ripples that move at a consistent rate, pass through the circle1 size, then grow to the outer circle size and fade out
   - Main copy: `网页加载中`
+- Wi-Fi disconnected state:
+  - Figma node: `412:637`
+  - State id: `nfc-wifi-disconnected`
+  - Uses the shared global aurora background and a failed Wi-Fi icon in the top-right status position
+  - Reuses the NFC ripple animation timing for `circle1` and `circle2`
+  - Ripple color follows Figma: `#FFE60A`
+  - Center symbol uses `assets/ui-icons/wifi-failed.svg` with a yellow glow
+  - Main copy: `Wi-Fi未连接`
+- Wi-Fi connecting state:
+  - Figma node: `412:681`
+  - State id: `nfc-wifi-connecting`
+  - Uses the shared global aurora background and a failed/connecting Wi-Fi icon in the top-right status position
+  - Reuses the NFC ripple animation timing for `circle1` and `circle2`
+  - Ripple color follows Figma: `#FFE60A`
+  - Center Wi-Fi symbol is split into three local SVG tiers:
+    `wifi-connecting-tier-1.svg`, `wifi-connecting-tier-2.svg`, and `wifi-connecting-tier-3.svg`
+  - First tier stays at 100% opacity; second and third tiers loop from 45% to 100% opacity in sequence
+  - Main copy: `Wi-Fi连接中...`
+- Wi-Fi connected state:
+  - Figma node: `412:702`
+  - State id: `nfc-wifi-connected`
+  - Uses the shared global aurora background and normal top-right Wi-Fi icon
+  - Reuses the NFC ripple animation timing for `circle1` and `circle2`
+  - Ripple color follows Figma: `#27FF0A`
+  - Center symbol uses `assets/ui-icons/wifi-success.svg`
+  - Main copy: `Wi-Fi连接成功`
+- Wi-Fi connection failed state:
+  - State id: `nfc-wifi-connection-failed`
+  - Uses the same style, motion, top-right failed Wi-Fi icon, and yellow ripple treatment as the Wi-Fi disconnected state
+  - Ripple color follows Figma Wi-Fi failure style: `#FFE60A`
+  - Center symbol uses `assets/ui-icons/wifi-failed.svg` with a yellow glow
+  - Main copy: `Wi-Fi连接失败`
 - NFC web loading failure state:
   - Figma node: `412:722`
-  - State id: `nfc-web-failed`
+  - State id: `nfc-web-loading-failed`
   - Uses the shared global aurora background and top-right Wi-Fi icon
   - Reuses the NFC loading ripple animation, with red UI colors from Figma
   - Center symbol is a CSS-rendered red failure icon
@@ -98,8 +151,13 @@ It cycles between available states. Current states are:
 
 - 开机
 - 待机
+- 读卡失败
+- Wi-Fi未连接
+- Wi-Fi连接中
+- Wi-Fi连接成功
+- Wi-Fi连接失败
 - 加载
-- 失败
+- 加载失败
 - 关机
 
 Shutdown is kept as the final state. Future non-terminal states should be inserted before the shutdown state so the review order stays like:
