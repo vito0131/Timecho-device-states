@@ -58,10 +58,253 @@
         pointer-events: none;
       }
 
+      .standby-ui,
+      .nfc-loading-ui {
+        position: absolute;
+        inset: 0;
+        z-index: 11;
+        opacity: 0;
+        pointer-events: none;
+        transition: opacity 360ms ease-in-out;
+      }
+
+      .standby-ui[hidden],
+      .nfc-loading-ui[hidden] {
+        display: none;
+      }
+
+      .standby-ui.is-active,
+      .nfc-loading-ui.is-active {
+        opacity: 1;
+      }
+
+      .wifi-status-icon {
+        position: absolute;
+        top: clamp(24px, 8.333vh, 60px);
+        right: clamp(24px, 7.8125vw, 100px);
+        width: 34px;
+        height: 34px;
+      }
+
+      .standby-card-content {
+        --standby-y: 0px;
+        position: absolute;
+        left: 50%;
+        top: 54.3%;
+        width: min(70vw, 272px);
+        opacity: 1;
+        transform: translate(-50%, calc(-50% + var(--standby-y)));
+        transition:
+          opacity 360ms ease-in-out,
+          transform 320ms ease-in-out;
+        will-change: opacity, transform;
+      }
+
+      .standby-card-content.is-exiting {
+        --standby-y: 5px;
+        opacity: 0;
+      }
+
+      .standby-card-content.is-entering {
+        opacity: 0;
+        transition-duration: 0ms;
+      }
+
+      .standby-card-visual {
+        position: relative;
+        width: 100%;
+        aspect-ratio: 272 / 180;
+      }
+
+      .standby-card-timecho {
+        position: absolute;
+        left: 4.41%;
+        top: 11.11%;
+        width: 94.94%;
+        height: auto;
+        display: block;
+      }
+
+      .standby-card-placement-card {
+        position: absolute;
+        left: 18.68%;
+        top: -2.33%;
+        width: 39.34%;
+        height: auto;
+        display: block;
+        animation: standby-card-loop 1.9s ease-in-out infinite;
+        will-change: transform, opacity;
+      }
+
+      @keyframes standby-card-loop {
+        0%,
+        100% {
+          opacity: 0.86;
+          transform: translate3d(0, -5px, 0);
+        }
+
+        48%,
+        58% {
+          opacity: 1;
+          transform: translate3d(0, 2px, 0);
+        }
+      }
+
+      .standby-card-instruction {
+        margin: 30px 0 0;
+        color: #fff;
+        font: 500 22px/1.4 "PingFang SC", "PingFang TC", "Noto Sans SC", system-ui, sans-serif;
+        text-align: center;
+        letter-spacing: 0;
+        white-space: nowrap;
+      }
+
+      .nfc-loading-content {
+        --loading-y: 0px;
+        position: absolute;
+        left: 50%;
+        top: calc(50% + 31px);
+        width: min(70vw, 262px);
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 30px;
+        opacity: 1;
+        transform: translate(-50%, calc(-50% + var(--loading-y)));
+        transition:
+          opacity 360ms ease-in-out,
+          transform 320ms ease-in-out;
+        will-change: opacity, transform;
+      }
+
+      .nfc-loading-content.is-exiting {
+        --loading-y: 5px;
+        opacity: 0;
+      }
+
+      .nfc-loading-content.is-entering {
+        opacity: 0;
+        transition-duration: 0ms;
+      }
+
+      .nfc-loading-indicator {
+        --circle-breathe-easing: ease-in-out;
+        position: relative;
+        width: min(61.07%, 160px);
+        aspect-ratio: 1;
+      }
+
+      .nfc-loading-circle,
+      .nfc-loading-spinner {
+        position: absolute;
+        border-radius: 50%;
+      }
+
+      .nfc-loading-circle {
+        border: 2px solid rgba(255, 255, 255, 0.5);
+        opacity: 0.2;
+        will-change: opacity;
+      }
+
+      .nfc-loading-circle.circle-outer {
+        inset: 0;
+        animation: nfc-circle-outer-breathe 1.45s var(--circle-breathe-easing) infinite;
+      }
+
+      .nfc-loading-circle.circle-inner {
+        inset: 13.04%;
+        animation: nfc-circle-inner-breathe 1.45s var(--circle-breathe-easing) infinite;
+      }
+
+      .nfc-loading-spinner {
+        left: 50%;
+        top: 50%;
+        width: 44.1%;
+        aspect-ratio: 1;
+        transform: translate(-50%, -50%);
+        transform-origin: center;
+        animation: nfc-spinner-rotate 1.1s linear infinite;
+      }
+
+      .nfc-loading-spinner-track,
+      .nfc-loading-spinner-arc {
+        fill: none;
+        stroke-width: 8.5;
+      }
+
+      .nfc-loading-spinner-track {
+        stroke: rgba(255, 255, 255, 0.22);
+      }
+
+      .nfc-loading-spinner-arc {
+        stroke: rgba(255, 255, 255, 0.96);
+        stroke-dasharray: 128 190;
+        stroke-linecap: round;
+      }
+
+      .nfc-loading-copy {
+        width: 100%;
+        margin: 0;
+        padding: 16px 24px;
+        color: #fff;
+        font: 500 22px/1.4 "PingFang SC", "PingFang TC", "Noto Sans SC", system-ui, sans-serif;
+        letter-spacing: 0;
+        text-align: center;
+        white-space: nowrap;
+      }
+
+      @keyframes nfc-spinner-rotate {
+        from {
+          transform: translate(-50%, -50%) rotate(0deg);
+        }
+
+        to {
+          transform: translate(-50%, -50%) rotate(360deg);
+        }
+      }
+
+      @keyframes nfc-circle-inner-breathe {
+        0%,
+        100% {
+          opacity: 0.2;
+        }
+
+        18%,
+        38% {
+          opacity: 0.7;
+        }
+
+        52% {
+          opacity: 0.2;
+        }
+      }
+
+      @keyframes nfc-circle-outer-breathe {
+        0%,
+        42% {
+          opacity: 0.2;
+        }
+
+        62%,
+        82% {
+          opacity: 0.4;
+        }
+
+        100% {
+          opacity: 0.2;
+        }
+      }
+
       .splash-logo-wrap {
         width: min(70vw, 55vh, 400px);
         aspect-ratio: 400 / 226;
         pointer-events: auto;
+        opacity: 1;
+        transform: translateY(0);
+        transition:
+          opacity 180ms ease-in-out,
+          transform 160ms ease-in-out;
+        will-change: opacity, transform;
       }
 
       .splash-logo-wrap canvas,
@@ -76,6 +319,18 @@
       .splash-logo-wrap.has-sequence img,
       .splash-logo-wrap.has-sequence svg {
         display: none;
+      }
+
+      .splash-logo-wrap.is-exiting {
+        opacity: 0;
+        transform: translateY(5px);
+        transition-duration: 160ms;
+      }
+
+      .splash-logo-wrap.is-entering {
+        opacity: 0;
+        transform: translateY(0);
+        transition-duration: 0ms;
       }
 
       .state-switcher {
@@ -123,6 +378,40 @@
       @media (max-width: 520px) {
         .splash-logo-wrap {
           width: min(84vw, 55vh);
+        }
+
+        .standby-card-content {
+          width: min(72vw, 272px);
+        }
+
+        .standby-card-instruction {
+          font-size: 18px;
+        }
+      }
+
+      @media (prefers-reduced-motion: reduce) {
+        .splash-logo-wrap {
+          transition: none;
+        }
+
+        .splash-logo-wrap.is-exiting {
+          transform: translateY(0);
+        }
+
+        .standby-ui,
+        .standby-card-content,
+        .nfc-loading-ui,
+        .nfc-loading-content {
+          transition: none;
+        }
+
+        .standby-card-placement-card {
+          animation: none;
+        }
+
+        .nfc-loading-circle,
+        .nfc-loading-spinner {
+          animation: none;
         }
       }
     </style>
@@ -188,6 +477,44 @@
               </clipPath>
             </defs>
           </svg>
+        </div>
+      </div>
+
+      <div class="standby-ui" id="standby-state" hidden aria-label="Standby card placement state">
+        <img class="wifi-status-icon" src="assets/ui-icons/wifi-status.svg" alt="Wi-Fi connected" />
+        <div class="standby-card-content" id="standby-card-content">
+          <div class="standby-card-visual" aria-label="Card placement area">
+            <img
+              class="standby-card-timecho"
+              src="assets/ui-icons/standby-timecho.png"
+              alt=""
+              width="259"
+              height="161"
+            />
+            <img
+              class="standby-card-placement-card"
+              src="assets/ui-icons/standby-card.png"
+              alt=""
+              width="107"
+              height="70"
+            />
+          </div>
+          <p class="standby-card-instruction">请将卡片放入示意处</p>
+        </div>
+      </div>
+
+      <div class="nfc-loading-ui" id="nfc-loading-state" hidden aria-label="NFC web loading state">
+        <img class="wifi-status-icon" src="assets/ui-icons/wifi-status.svg" alt="Wi-Fi connected" />
+        <div class="nfc-loading-content" id="nfc-loading-content">
+          <div class="nfc-loading-indicator" aria-label="Loading">
+            <span class="nfc-loading-circle circle-outer" aria-hidden="true"></span>
+            <span class="nfc-loading-circle circle-inner" aria-hidden="true"></span>
+            <svg class="nfc-loading-spinner" viewBox="0 0 72 72" aria-hidden="true">
+              <circle class="nfc-loading-spinner-track" cx="36" cy="36" r="31"></circle>
+              <circle class="nfc-loading-spinner-arc" cx="36" cy="36" r="31"></circle>
+            </svg>
+          </div>
+          <p class="nfc-loading-copy">网页加载中</p>
         </div>
       </div>
     </main>
@@ -387,11 +714,17 @@ void main() {
 
       const logoCanvas = document.getElementById("logo-sequence");
       const logoCtx = logoCanvas.getContext("2d");
+      const logoWrap = document.querySelector(".splash-logo-wrap");
+      const standbyUi = document.getElementById("standby-state");
+      const standbyCardContent = document.getElementById("standby-card-content");
+      const nfcLoadingUi = document.getElementById("nfc-loading-state");
+      const nfcLoadingContent = document.getElementById("nfc-loading-content");
       const auroraLayer = document.querySelector(".aurora-layer");
-      const states = [
+      const contentStates = [
         {
           id: "boot",
           label: "开机",
+          view: "sequence",
           frameCount: 118,
           fps: 18,
           path: "assets/logo-sequence",
@@ -399,23 +732,40 @@ void main() {
           fadeBackground: false,
         },
         {
-          id: "shutdown",
-          label: "关机",
-          frameCount: 159,
-          fps: 18,
-          path: "assets/shutdown-sequence",
-          mode: "once",
-          fadeBackground: true,
-          fadeStart: 0.72,
+          id: "standby-card-placement",
+          label: "待机",
+          view: "standby",
+        },
+        {
+          id: "nfc-web-loading",
+          label: "加载",
+          view: "nfc-loading",
         },
       ];
+      const shutdownState = {
+        id: "shutdown",
+        label: "关机",
+        view: "sequence",
+        frameCount: 159,
+        fps: 18,
+        path: "assets/shutdown-sequence",
+        mode: "once",
+        fadeBackground: true,
+        fadeStart: 0.72,
+      };
+      const states = [...contentStates, shutdownState];
       let currentStateIndex = 0;
       let currentFrames = [];
       let logoAnimationToken = 0;
+      let isStateTransitioning = false;
+      let activeView = "sequence";
       const stateLabel = document.getElementById("state-label");
       const frameCache = new Map();
+      const transitionOutMs = 320;
+      const transitionInMs = 360;
 
       function loadFrames(state) {
+        if (state.view !== "sequence") return [];
         return Array.from({ length: state.frameCount }, (_, index) => {
           const img = new Image();
           img.decoding = "async";
@@ -440,6 +790,7 @@ void main() {
       }
 
       function getFrames(state) {
+        if (state.view !== "sequence") return [];
         if (!frameCache.has(state.id)) {
           frameCache.set(state.id, loadFrames(state));
         }
@@ -448,6 +799,9 @@ void main() {
 
       const bootFrames = getFrames(states[0]);
       currentFrames = bootFrames;
+      states.slice(1).forEach((state) => {
+        waitForFrames(getFrames(state)).catch(() => {});
+      });
 
       function drawLogoFrame(index) {
         const img = currentFrames[index];
@@ -458,6 +812,85 @@ void main() {
 
       function setAuroraOpacity(value) {
         auroraLayer.style.opacity = String(Math.max(0, Math.min(1, value)));
+      }
+
+      function wait(ms) {
+        return new Promise((resolve) => window.setTimeout(resolve, ms));
+      }
+
+      function exitLogo() {
+        logoWrap.classList.remove("is-entering");
+        logoWrap.classList.add("is-exiting");
+        return wait(transitionOutMs);
+      }
+
+      function enterLogo() {
+        logoWrap.classList.remove("is-exiting");
+        logoWrap.classList.add("is-entering");
+        void logoWrap.offsetWidth;
+        logoWrap.classList.remove("is-entering");
+        return wait(transitionInMs);
+      }
+
+      function showLogoLayer() {
+        logoWrap.hidden = false;
+        standbyUi.classList.remove("is-active");
+        standbyUi.hidden = true;
+        nfcLoadingUi.classList.remove("is-active");
+        nfcLoadingUi.hidden = true;
+        activeView = "sequence";
+      }
+
+      function showStandbyLayer() {
+        standbyUi.hidden = false;
+        standbyUi.classList.add("is-active");
+        nfcLoadingUi.classList.remove("is-active");
+        nfcLoadingUi.hidden = true;
+        logoWrap.hidden = true;
+        activeView = "standby";
+      }
+
+      function showNfcLoadingLayer() {
+        nfcLoadingUi.hidden = false;
+        nfcLoadingUi.classList.add("is-active");
+        standbyUi.classList.remove("is-active");
+        standbyUi.hidden = true;
+        logoWrap.hidden = true;
+        activeView = "nfc-loading";
+      }
+
+      function exitStandby() {
+        standbyCardContent.classList.remove("is-entering");
+        standbyCardContent.classList.add("is-exiting");
+        return wait(transitionOutMs);
+      }
+
+      function enterStandby() {
+        standbyCardContent.classList.remove("is-exiting");
+        standbyCardContent.classList.add("is-entering");
+        void standbyCardContent.offsetWidth;
+        standbyCardContent.classList.remove("is-entering");
+        return wait(transitionInMs);
+      }
+
+      function exitNfcLoading() {
+        nfcLoadingContent.classList.remove("is-entering");
+        nfcLoadingContent.classList.add("is-exiting");
+        return wait(transitionOutMs);
+      }
+
+      function enterNfcLoading() {
+        nfcLoadingContent.classList.remove("is-exiting");
+        nfcLoadingContent.classList.add("is-entering");
+        void nfcLoadingContent.offsetWidth;
+        nfcLoadingContent.classList.remove("is-entering");
+        return wait(transitionInMs);
+      }
+
+      function exitActiveView() {
+        if (activeView === "standby") return exitStandby();
+        if (activeView === "nfc-loading") return exitNfcLoading();
+        return exitLogo();
       }
 
       function playLogoSequence(startTime, state, token) {
@@ -491,31 +924,57 @@ void main() {
         requestAnimationFrame(step);
       }
 
-      function setState(nextIndex) {
-        currentStateIndex = (nextIndex + states.length) % states.length;
-        const state = states[currentStateIndex];
-        stateLabel.textContent = state.label;
-        setAuroraOpacity(1);
+      async function setState(nextIndex) {
+        if (isStateTransitioning) return;
+        isStateTransitioning = true;
+        const targetIndex = (nextIndex + states.length) % states.length;
+        const state = states[targetIndex];
         const frames = getFrames(state);
-        currentFrames = frames;
+
+        try {
+          await Promise.all([exitActiveView(), waitForFrames(frames)]);
+        } catch {
+          document.querySelector(".splash-logo-wrap").classList.remove("has-sequence");
+          isStateTransitioning = false;
+          return;
+        }
+
+        currentStateIndex = targetIndex;
+        stateLabel.textContent = state.label;
         logoAnimationToken += 1;
         const token = logoAnimationToken;
-        logoCtx.clearRect(0, 0, logoCanvas.width, logoCanvas.height);
-        drawLogoFrame(0);
-        waitForFrames(frames)
-          .then(() => {
-            if (token !== logoAnimationToken) return;
-            drawLogoFrame(0);
-            if (!window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
-              playLogoSequence(performance.now(), state, token);
-            } else if (state.mode === "once" && state.fadeBackground) {
-              logoCtx.clearRect(0, 0, logoCanvas.width, logoCanvas.height);
-              setAuroraOpacity(0);
-            }
-          })
-          .catch(() => {
-            document.querySelector(".splash-logo-wrap").classList.remove("has-sequence");
-          });
+        setAuroraOpacity(1);
+
+        if (state.view === "standby") {
+          logoCtx.clearRect(0, 0, logoCanvas.width, logoCanvas.height);
+          showStandbyLayer();
+          await enterStandby();
+        } else if (state.view === "nfc-loading") {
+          logoCtx.clearRect(0, 0, logoCanvas.width, logoCanvas.height);
+          showNfcLoadingLayer();
+          await enterNfcLoading();
+        } else {
+          showLogoLayer();
+          currentFrames = frames;
+          logoCtx.clearRect(0, 0, logoCanvas.width, logoCanvas.height);
+          drawLogoFrame(0);
+
+          await enterLogo();
+          if (token !== logoAnimationToken) {
+            isStateTransitioning = false;
+            return;
+          }
+
+          drawLogoFrame(0);
+          if (!window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
+            playLogoSequence(performance.now(), state, token);
+          } else if (state.mode === "once" && state.fadeBackground) {
+            logoCtx.clearRect(0, 0, logoCanvas.width, logoCanvas.height);
+            setAuroraOpacity(0);
+          }
+        }
+
+        isStateTransitioning = false;
       }
 
       document.getElementById("prev-state").addEventListener("click", () => setState(currentStateIndex - 1));
