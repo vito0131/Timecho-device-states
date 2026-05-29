@@ -10,6 +10,7 @@ Show device state animations for WowNow-style device flows:
 - Shutdown loading
 - Standby card placement
 - NFC web loading
+- NFC web loading failure
 - Future states such as standby, updating, connecting, etc.
 
 The page is currently a pure static site with no backend and no API connection. It is meant for visual demonstration and review.
@@ -77,6 +78,13 @@ assets/
   - Loading spinner rotates continuously
   - `circle1` and `circle2` are staggered expanding ripples that move at a consistent rate, pass through the circle1 size, then grow to the outer circle size and fade out
   - Main copy: `网页加载中`
+- NFC web loading failure state:
+  - Figma node: `412:722`
+  - State id: `nfc-web-failed`
+  - Uses the shared global aurora background and top-right Wi-Fi icon
+  - Reuses the NFC loading ripple animation, with red UI colors from Figma
+  - Center symbol is a CSS-rendered red failure icon
+  - Main copy: `网页加载失败`
 
 ## UI
 
@@ -91,6 +99,7 @@ It cycles between available states. Current states are:
 - 开机
 - 待机
 - 加载
+- 失败
 - 关机
 
 Shutdown is kept as the final state. Future non-terminal states should be inserted before the shutdown state so the review order stays like:

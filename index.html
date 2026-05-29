@@ -59,7 +59,8 @@
       }
 
       .standby-ui,
-      .nfc-loading-ui {
+      .nfc-loading-ui,
+      .nfc-failed-ui {
         position: absolute;
         inset: 0;
         z-index: 11;
@@ -69,12 +70,14 @@
       }
 
       .standby-ui[hidden],
-      .nfc-loading-ui[hidden] {
+      .nfc-loading-ui[hidden],
+      .nfc-failed-ui[hidden] {
         display: none;
       }
 
       .standby-ui.is-active,
-      .nfc-loading-ui.is-active {
+      .nfc-loading-ui.is-active,
+      .nfc-failed-ui.is-active {
         opacity: 1;
       }
 
@@ -159,7 +162,8 @@
         white-space: nowrap;
       }
 
-      .nfc-loading-content {
+      .nfc-loading-content,
+      .nfc-failed-content {
         --loading-y: 0px;
         position: absolute;
         left: 50%;
@@ -177,21 +181,29 @@
         will-change: opacity, transform;
       }
 
-      .nfc-loading-content.is-exiting {
+      .nfc-loading-content.is-exiting,
+      .nfc-failed-content.is-exiting {
         --loading-y: 5px;
         opacity: 0;
       }
 
-      .nfc-loading-content.is-entering {
+      .nfc-loading-content.is-entering,
+      .nfc-failed-content.is-entering {
         opacity: 0;
         transition-duration: 0ms;
       }
 
       .nfc-loading-indicator {
         --ripple-easing: linear;
+        --ripple-color: 255, 255, 255;
         position: relative;
         width: min(61.07%, 160px);
         aspect-ratio: 1;
+      }
+
+      .nfc-failed-indicator {
+        --ripple-color: 255, 60, 57;
+        width: min(61.45%, 161px);
       }
 
       .nfc-loading-circle,
@@ -203,9 +215,9 @@
       .nfc-loading-circle {
         left: 50%;
         top: 50%;
-        width: 118.26%;
-        height: 118.26%;
-        border: 2px solid rgba(255, 255, 255, 0.5);
+        width: 100%;
+        height: 100%;
+        border: 2px solid rgba(var(--ripple-color), 0.5);
         opacity: 0;
         transform: translate(-50%, -50%) scale(0.34);
         will-change: opacity, transform;
@@ -244,6 +256,40 @@
         stroke: rgba(255, 255, 255, 0.96);
         stroke-dasharray: 128 190;
         stroke-linecap: round;
+      }
+
+      .nfc-failed-symbol {
+        position: absolute;
+        left: 50%;
+        top: 50%;
+        width: 39.75%;
+        aspect-ratio: 1;
+        border-radius: 50%;
+        background: linear-gradient(116deg, #ff9694 0%, #d42c2a 100%);
+        box-shadow: 0 0 31px rgba(255, 42, 42, 0.8);
+        transform: translate(-50%, -50%);
+      }
+
+      .nfc-failed-symbol::before,
+      .nfc-failed-symbol::after {
+        position: absolute;
+        left: 50%;
+        border-radius: 999px;
+        background: #9b2421;
+        content: "";
+        transform: translateX(-50%);
+      }
+
+      .nfc-failed-symbol::before {
+        top: 16%;
+        width: 13%;
+        height: 45%;
+      }
+
+      .nfc-failed-symbol::after {
+        bottom: 15.5%;
+        width: 15.5%;
+        aspect-ratio: 1;
       }
 
       .nfc-loading-copy {
@@ -455,7 +501,9 @@
         .standby-ui,
         .standby-card-content,
         .nfc-loading-ui,
-        .nfc-loading-content {
+        .nfc-loading-content,
+        .nfc-failed-ui,
+        .nfc-failed-content {
           transition: none;
         }
 
@@ -579,6 +627,18 @@
             </svg>
           </div>
           <p class="nfc-loading-copy">网页加载中</p>
+        </div>
+      </div>
+
+      <div class="nfc-failed-ui" id="nfc-failed-state" hidden aria-label="NFC web loading failed state">
+        <img class="wifi-status-icon" src="assets/ui-icons/wifi-status.svg" alt="Wi-Fi connected" />
+        <div class="nfc-failed-content" id="nfc-failed-content">
+          <div class="nfc-loading-indicator nfc-failed-indicator" aria-label="Loading failed">
+            <span class="nfc-loading-circle ripple-primary" aria-hidden="true"></span>
+            <span class="nfc-loading-circle ripple-secondary" aria-hidden="true"></span>
+            <span class="nfc-failed-symbol" aria-hidden="true"></span>
+          </div>
+          <p class="nfc-loading-copy">网页加载失败</p>
         </div>
       </div>
     </main>
@@ -783,6 +843,8 @@ void main() {
       const standbyCardContent = document.getElementById("standby-card-content");
       const nfcLoadingUi = document.getElementById("nfc-loading-state");
       const nfcLoadingContent = document.getElementById("nfc-loading-content");
+      const nfcFailedUi = document.getElementById("nfc-failed-state");
+      const nfcFailedContent = document.getElementById("nfc-failed-content");
       const auroraLayer = document.querySelector(".aurora-layer");
       const contentStates = [
         {
@@ -804,6 +866,11 @@ void main() {
           id: "nfc-web-loading",
           label: "加载",
           view: "nfc-loading",
+        },
+        {
+          id: "nfc-web-failed",
+          label: "失败",
+          view: "nfc-failed",
         },
       ];
       const shutdownState = {
@@ -935,6 +1002,8 @@ void main() {
         standbyUi.hidden = true;
         nfcLoadingUi.classList.remove("is-active");
         nfcLoadingUi.hidden = true;
+        nfcFailedUi.classList.remove("is-active");
+        nfcFailedUi.hidden = true;
         activeView = "sequence";
       }
 
@@ -943,6 +1012,8 @@ void main() {
         standbyUi.classList.add("is-active");
         nfcLoadingUi.classList.remove("is-active");
         nfcLoadingUi.hidden = true;
+        nfcFailedUi.classList.remove("is-active");
+        nfcFailedUi.hidden = true;
         logoWrap.hidden = true;
         activeView = "standby";
       }
@@ -952,8 +1023,21 @@ void main() {
         nfcLoadingUi.classList.add("is-active");
         standbyUi.classList.remove("is-active");
         standbyUi.hidden = true;
+        nfcFailedUi.classList.remove("is-active");
+        nfcFailedUi.hidden = true;
         logoWrap.hidden = true;
         activeView = "nfc-loading";
+      }
+
+      function showNfcFailedLayer() {
+        nfcFailedUi.hidden = false;
+        nfcFailedUi.classList.add("is-active");
+        standbyUi.classList.remove("is-active");
+        standbyUi.hidden = true;
+        nfcLoadingUi.classList.remove("is-active");
+        nfcLoadingUi.hidden = true;
+        logoWrap.hidden = true;
+        activeView = "nfc-failed";
       }
 
       function exitStandby() {
@@ -984,9 +1068,24 @@ void main() {
         return wait(transitionInMs);
       }
 
+      function exitNfcFailed() {
+        nfcFailedContent.classList.remove("is-entering");
+        nfcFailedContent.classList.add("is-exiting");
+        return wait(transitionOutMs);
+      }
+
+      function enterNfcFailed() {
+        nfcFailedContent.classList.remove("is-exiting");
+        nfcFailedContent.classList.add("is-entering");
+        void nfcFailedContent.offsetWidth;
+        nfcFailedContent.classList.remove("is-entering");
+        return wait(transitionInMs);
+      }
+
       function exitActiveView() {
         if (activeView === "standby") return exitStandby();
         if (activeView === "nfc-loading") return exitNfcLoading();
+        if (activeView === "nfc-failed") return exitNfcFailed();
         return exitLogo();
       }
 
@@ -1051,6 +1150,10 @@ void main() {
           logoCtx.clearRect(0, 0, logoCanvas.width, logoCanvas.height);
           showNfcLoadingLayer();
           await enterNfcLoading();
+        } else if (state.view === "nfc-failed") {
+          logoCtx.clearRect(0, 0, logoCanvas.width, logoCanvas.height);
+          showNfcFailedLayer();
+          await enterNfcFailed();
         } else {
           showLogoLayer();
           currentFrames = frames;

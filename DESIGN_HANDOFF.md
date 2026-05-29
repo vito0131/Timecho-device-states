@@ -117,3 +117,65 @@ nfcLoadingOuterBreathingCircle: x=0, y=0, width=160, height=160
 nfcLoadingSpinner: x=44.72, y=44.72, width=70.56, height=70.56
 nfcWebLoadingCopy: font=PingFang SC Medium, size=22px, color=#FFFFFF
 ```
+
+## NFC Web Loading Failed State
+
+Figma source:
+
+```text
+TimeEcho_UI
+Frame: 放入NFC卡片-网页加载失败
+Node: 412:722
+```
+
+### Developer Names
+
+| Figma layer | Developer name | Local selector | Notes |
+| --- | --- | --- | --- |
+| `放入NFC卡片-网页加载失败` | `nfcWebLoadingFailedState` | `#nfc-failed-state` | Full NFC web loading failed state layer |
+| `icon/wifi` | `wifiStatusIcon` | `assets/ui-icons/wifi-status.svg`, `.wifi-status-icon` | Shared top-right Wi-Fi icon |
+| `content` | `nfcWebLoadingFailedContent` | `.nfc-failed-content` | Center content group |
+| `circle1` | `nfcFailedPrimaryRipple` | `.nfc-loading-circle.ripple-primary` | First red expanding ripple |
+| `circle2` | `nfcFailedSecondaryRipple` | `.nfc-loading-circle.ripple-secondary` | Second red expanding ripple, offset after the first |
+| `loaed failed` | `nfcFailedSymbol` | `.nfc-failed-symbol` | CSS-rendered red failure icon |
+| `网页加载失败` | `nfcWebLoadingFailedCopy` | `.nfc-loading-copy` | User-facing copy |
+
+### Copy
+
+```text
+网页加载失败
+```
+
+Suggested i18n key:
+
+```text
+nfc.webLoading.failed.copy
+```
+
+### Color Reference
+
+```text
+nfcFailedRipple: #FF3C39 -> #D42C2A
+nfcFailedSymbol: #FF9694 -> #D42C2A
+nfcFailedSymbolGlow: rgba(255, 42, 42, 0.8)
+```
+
+### Layout Reference
+
+Original frame size:
+
+```text
+1280 x 720
+```
+
+Main positions from Figma:
+
+```text
+wifiStatusIcon: x=1146, y=60, width=34, height=34
+nfcWebLoadingFailedContent: x=509, y=263.5, width=262, height=254
+nfcFailedIndicator: x=50.5, y=0, width=161, height=161
+nfcFailedOuterRipple: x=0, y=0, width=161, height=161
+nfcFailedInnerRipple: x=21, y=21, width=119, height=119
+nfcFailedSymbol: x=48, y=48.5, width=64, height=64
+nfcWebLoadingFailedCopy: font=PingFang SC Medium, size=22px, color=#FFFFFF
+```
