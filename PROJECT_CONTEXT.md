@@ -50,8 +50,13 @@ assets/
     wifi-connecting-tier-1.svg
     wifi-connecting-tier-2.svg
     wifi-connecting-tier-3.svg
+    wifi-connection-failed.svg
     wifi-failed.svg
     wifi-success.svg
+    wifi-success-badge.svg
+    wifi-success-tier-1.svg
+    wifi-success-tier-2.svg
+    wifi-success-tier-3.svg
     wifi-status.svg
 ```
 
@@ -124,13 +129,13 @@ assets/
   - Uses the shared global aurora background and normal top-right Wi-Fi icon
   - `circle1` and `circle2` are shown as static rings with circle2 at 5% opacity, circle1 at 10% opacity, and ripple animation disabled
   - Success color follows Figma: `#27FF0A`
-  - Center symbol uses `assets/ui-icons/wifi-success.svg`
+  - Center symbol uses three white Wi-Fi arc assets plus a green success badge:
+    `wifi-success-tier-1.svg`, `wifi-success-tier-2.svg`, `wifi-success-tier-3.svg`, and `wifi-success-badge.svg`
   - Main copy: `Wi-Fi连接成功`
 - Wi-Fi connection failed state:
   - State id: `nfc-wifi-connection-failed`
-  - Uses the same style, top-right failed Wi-Fi icon, and center failed icon treatment as the Wi-Fi disconnected state
-  - Failure color follows Figma Wi-Fi failure style: `#FFE60A`
-  - Center symbol uses `assets/ui-icons/wifi-failed.svg` with a yellow glow
+  - Uses the same top-right failed Wi-Fi icon as the Wi-Fi disconnected state
+  - Center symbol uses `assets/ui-icons/wifi-connection-failed.svg`, a Figma-matched composite containing static yellow rings, white Wi-Fi arcs, and a red failure badge
   - Main copy: `Wi-Fi连接失败`
 - NFC web loading failure state:
   - Figma node: `412:722`

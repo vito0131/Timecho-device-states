@@ -293,7 +293,8 @@ Node: 412:702
 | `success` | `nfcWifiConnectedIndicator` | `.nfc-wifi-connected-indicator` | Shared indicator wrapper; ripple circles are static |
 | `circle2` | `nfcWifiConnectedPrimaryRipple` | `.nfc-loading-circle.ripple-primary` | Static outer ring, 5% opacity; ripple animation disabled |
 | `circle1` | `nfcWifiConnectedSecondaryRipple` | `.nfc-loading-circle.ripple-secondary` | Static inner ring, 10% opacity; ripple animation disabled |
-| `success_2` | `nfcWifiConnectedSymbol` | `assets/ui-icons/wifi-success.svg`, `.nfc-wifi-connected-symbol` | Center success icon |
+| `wifi not connected` | `nfcWifiConnectedWifiSymbol` | `assets/ui-icons/wifi-success-tier-1.svg` ... `wifi-success-tier-3.svg`, `.nfc-wifi-connected-symbol` | Center Wi-Fi arc icon |
+| `success` | `nfcWifiConnectedSuccessBadge` | `assets/ui-icons/wifi-success-badge.svg`, `.nfc-wifi-connected-badge` | Small success badge layered over the Wi-Fi icon |
 | `Wi-Fi连接成功` | `nfcWifiConnectedCopy` | `.nfc-loading-copy` | User-facing copy |
 
 ### Copy
@@ -313,6 +314,8 @@ nfc.wifiConnected.copy
 ```text
 nfcWifiConnectedPrimaryRipple: static outer ring, 5% opacity, no animation
 nfcWifiConnectedSecondaryRipple: static inner ring, 10% opacity, no animation
+nfcWifiConnectedWifiSymbol: static white Wi-Fi arcs
+nfcWifiConnectedSuccessBadge: static green badge offset to the lower right of the Wi-Fi arcs
 ```
 
 ### Color Reference
@@ -421,10 +424,8 @@ This state intentionally mirrors the Wi-Fi disconnected visual treatment and mot
 | `Wi-Fi连接失败` | `nfcWifiConnectionFailedState` | `#nfc-wifi-connection-failed-state` | Full Wi-Fi connection failure state layer |
 | `icon/wifi failed` | `wifiFailedStatusIcon` | `assets/ui-icons/wifi-failed.svg`, `.wifi-status-icon` | Top-right failed Wi-Fi icon |
 | `content` | `nfcWifiConnectionFailedContent` | `.nfc-wifi-connection-failed-content` | Center content group |
-| `not connect` | `nfcWifiConnectionFailedIndicator` | `.nfc-wifi-connection-failed-indicator` | Shared indicator wrapper; ripple circles are static |
-| `circle1` | `nfcWifiConnectionFailedPrimaryRipple` | `.nfc-loading-circle.ripple-primary` | Static outer ring, 5% opacity; ripple animation disabled |
-| `circle1_2` | `nfcWifiConnectionFailedSecondaryRipple` | `.nfc-loading-circle.ripple-secondary` | Static inner ring, 10% opacity; ripple animation disabled |
-| `wifi not connected` | `nfcWifiConnectionFailedSymbol` | `assets/ui-icons/wifi-failed.svg`, `.nfc-wifi-connection-failed-symbol` | Center failed Wi-Fi icon with yellow glow |
+| `not connected` | `nfcWifiConnectionFailedIndicator` | `.nfc-wifi-connection-failed-indicator` | Center indicator wrapper |
+| `not connected` contents | `nfcWifiConnectionFailedSymbol` | `assets/ui-icons/wifi-connection-failed.svg`, `.nfc-wifi-connection-failed-symbol` | Figma-matched composite with yellow rings, white Wi-Fi arcs, and red failure badge |
 | `Wi-Fi连接失败` | `nfcWifiConnectionFailedCopy` | `.nfc-loading-copy` | User-facing copy |
 
 ### Copy
@@ -442,27 +443,26 @@ nfc.wifiConnectionFailed.copy
 ### Motion
 
 ```text
-nfcWifiConnectionFailedPrimaryRipple: static outer ring, 5% opacity, no animation
-nfcWifiConnectionFailedSecondaryRipple: static inner ring, 10% opacity, no animation
+nfcWifiConnectionFailedSymbol: static composite SVG with static outer/inner rings, Wi-Fi arcs, and failure badge
 ```
 
 ### Color Reference
 
 ```text
 nfcWifiConnectionFailedRipple: #FFE60A
-nfcWifiConnectionFailedSymbolGlow: rgba(255, 230, 10, 0.9)
+nfcWifiConnectionFailedBadge: #FF9694 -> #D42C2A
+nfcWifiConnectionFailedBadgeGlow: rgba(255, 42, 42, 0.8)
 ```
 
 ### Layout Reference
 
-Matches the Wi-Fi disconnected layout:
+Matches the Figma Wi-Fi connection failed layout:
 
 ```text
 wifiFailedStatusIcon: x=1146, y=60, width=34, height=34
 nfcWifiConnectionFailedContent: x=509, y=264.5, width=262, height=253
 nfcWifiConnectionFailedIndicator: x=50.5, y=0, width=161, height=161
-nfcWifiConnectionFailedOuterRipple: x=0, y=0, width=161, height=161
-nfcWifiConnectionFailedInnerRipple: x=21, y=21, width=119, height=119
+nfcWifiConnectionFailedSymbol: x=0, y=0, width=161, height=161
 nfcWifiConnectionFailedCopy: font=PingFang SC Medium, size=22px, color=#FFFFFF
 ```
 
